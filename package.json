@@ -21,7 +21,8 @@
     "number-to-words": "^1.2.4",
     "pure-react-carousel": "^1.27.6",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@babel/core": "^7.13.8",
