@@ -11,6 +11,12 @@ export interface JpegData {
 }
 
 // Returns an object with the width and height of the JPEG image stored in bytes, or null if the bytes do not represent a JPEG image.
+/**
+ * Parse the header of a JPEG image and return basic information if valid.
+ *
+ * @param bytes - Raw image data.
+ * @returns JPEG metadata or `undefined` when the data is not a JPEG.
+ */
 export const readJpegHeader = (bytes: Uint8Array): JpegData | undefined => {
   // JPEG magick
   if (bytes[0] !== 0xff || bytes[1] !== 0xd8) {

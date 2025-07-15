@@ -15,4 +15,8 @@ const angleExtractors: { [K in HandType]: AngleExtractor } = {
   [HandType.Second]: seconds,
 };
 
+/**
+ * Mapping from hand type to a function that returns the fractional rotation for
+ * a particular hand at a given time.
+ */
 export default angleExtractors;

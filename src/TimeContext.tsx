@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { ZonedDateTime } from '@js-joda/core';
+import { ReactNode } from 'react';
 
 const TimeContext = createContext<ZonedDateTime>(ZonedDateTime.now());
 
@@ -16,7 +17,9 @@ export const TimeConsumer = TimeContext.Consumer;
 /**
  * Provides the current time and updates precisely on second boundaries.
  */
-export const TimeProvider: FunctionComponent = ({ children }) => {
+export const TimeProvider: FunctionComponent<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [now, setNow] = useState(() => ZonedDateTime.now());
   useEffect(() => {
     const tick = () => setNow(ZonedDateTime.now());

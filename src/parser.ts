@@ -11,6 +11,12 @@ export type ParseResult =
   | { errors: readonly ValidationError[] }
   | { exception: string };
 
+/**
+ * Parse a clock JSON string and validate it against the schema.
+ *
+ * @param json - Raw JSON string representing a clock.
+ * @returns Parsed clock wrapper or validation errors/exception info.
+ */
 const parser = (json: string): ParseResult => {
   try {
     const clock = JSON.parse(json);
@@ -21,7 +27,9 @@ const parser = (json: string): ParseResult => {
       return { errors };
     }
   } catch (e) {
-    return { exception: e.message };
+    return {
+      exception: e instanceof Error ? e.message : String(e),
+    };
   }
 };
 

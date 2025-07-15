@@ -141,6 +141,7 @@
         "fontFamily": { "type": "string" },
         "dateTimeFormat": {
           "enum": [
+            "",
             "HHMMSS",
             "HHMM",
             "HHMMPM",
