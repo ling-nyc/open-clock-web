@@ -10,6 +10,8 @@ import serve from 'rollup-plugin-serve';
 import sizes from 'rollup-plugin-sizes';
 import { terser } from 'rollup-plugin-terser';
 import postcssEnv from 'postcss-preset-env';
+import fs from 'fs';
+import path from 'path';
 
 const DEV = process.env.NODE_ENV === 'development';
 const extensions = ['.js', '.jsx', '.ts', '.tsx'];
@@ -17,6 +19,46 @@ const postCssPlugins = [postcssEnv];
 
 if (!DEV) {
   postCssPlugins.push(cssnano({ preset: 'default' }));
+}
+
+// Custom plugin to copy files
+function copyFiles() {
+  return {
+    name: 'copy-files',
+    writeBundle() {
+      // Function to copy directory recursively
+      const copyDir = (src, dest) => {
+        if (!fs.existsSync(dest)) {
+          fs.mkdirSync(dest, { recursive: true });
+        }
+
+        const entries = fs.readdirSync(src, { withFileTypes: true });
+
+        for (const entry of entries) {
+          const srcPath = path.join(src, entry.name);
+          const destPath = path.join(dest, entry.name);
+
+          if (entry.isDirectory()) {
+            copyDir(srcPath, destPath);
+          } else {
+            fs.copyFileSync(srcPath, destPath);
+          }
+        }
+      };
+
+      // Copy public folder to dist
+      if (fs.existsSync('public')) {
+        copyDir('public', 'dist');
+      }
+
+      // Copy fonts folder to dist/fonts
+      if (fs.existsSync('fonts')) {
+        copyDir('fonts', path.join('dist', 'fonts'));
+      }
+
+      console.log('Static files copied successfully');
+    },
+  };
 }
 
 const plugins = [
@@ -37,13 +79,14 @@ const plugins = [
     plugins: postCssPlugins,
   }),
   emitEJS({ src: 'src' }),
+  copyFiles(),
   sizes(),
 ];
 
 if (DEV) {
   plugins.push(
     serve({
-      contentBase: ['dist', 'fonts'],
+      contentBase: ['dist', 'fonts', 'public'],
       open: true,
     })
   );

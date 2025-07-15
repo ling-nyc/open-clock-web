@@ -19,13 +19,20 @@ interface Props {
 }
 
 /**
- * Display a carousel of clocks that can be swiped or navigated through.
+ * MultipleClocks component displays a carousel of clocks using pure-react-carousel.
+ * Users can swipe or use navigation buttons to view different clocks.
+ *
+ * Props:
+ * - clocks: Array of clock data to display.
+ * - height: Height of each clock display.
+ * - ratio: Width/height ratio for each clock.
  */
 const MultipleClocks: FunctionComponent<Props> = ({
   clocks,
   height,
   ratio,
 }) => {
+  // Memoized style object for consistent sizing of carousel and clocks
   const style = useMemo(
     () => ({
       height,

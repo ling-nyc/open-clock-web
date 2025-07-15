@@ -2,6 +2,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   extends: ['airbnb-typescript', 'prettier'],
+  plugins: ['import', 'react'],
   env: { browser: true },
   parserOptions: {
     project: './tsconfig.lint.json',
