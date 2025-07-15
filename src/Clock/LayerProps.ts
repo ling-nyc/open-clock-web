@@ -1,15 +1,21 @@
-import type { ClockLayer } from '../open-clock';
+import { ClockLayer } from '../open-clock';
 
-export interface Asset {
-  url: string;
+export interface ImageAsset {
   width: number;
   height: number;
+  url: string;
 }
 
-export type Assets = Readonly<Record<string, Readonly<Asset>>>;
+export type Assets = {
+  [filename: string]: ImageAsset;
+};
 
 export interface LayerProps {
   layer: ClockLayer;
-  position: { x: number; y: number };
+  position: {
+    x: number;
+    y: number;
+  };
   assets: Assets;
+  onMissingFont?: (name: string) => void;
 }

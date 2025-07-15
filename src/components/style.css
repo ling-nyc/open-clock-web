@@ -1,15 +1,62 @@
+body {
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+  min-height: 100vh;
+  margin: 0;
+  color: #222;
+}
+
 .hidden {
   display: none;
 }
 
 .error {
-  color: red;
+  color: #dc2626;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 1em 1.5em;
+  border-radius: 8px;
+  margin: 1em auto;
+  max-width: 500px;
+  font-weight: 500;
+  text-align: center;
 }
 
 #jsonForm {
   width: 100%;
   max-width: 400px;
-  margin-bottom: 2em;
+  margin: 1em auto 1em auto;
+  padding: 0.5em 0.7em 0.3em 0.7em;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#jsonForm label {
+  font-size: 1.15em;
+  margin-bottom: 0.3em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+#jsonForm button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4em 1em;
+  font-size: 1em;
+  cursor: pointer;
+  margin-left: 0.5em;
+  transition: background 0.2s;
+}
+
+#jsonForm button:hover {
+  background: #1e40af;
 }
 
 #jsonEntry {
@@ -17,4 +64,204 @@
   height: 150px;
   font-family: monospace;
   resize: vertical;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 1em;
+  margin-bottom: 1em;
+  background: #f1f5f9;
+}
+
+button[type="button"] {
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6em 1.4em;
+  font-size: 1em;
+  cursor: pointer;
+  margin: 1em 0;
+  transition: background 0.2s;
+}
+
+button[type="button"]:hover {
+  background: #059669;
+}
+
+/* Center main content */
+body > #root > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+}
+
+/* Clock and carousel enhancements */
+.carousel__slider {
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  border-radius: 16px;
+  background: #fff;
+  padding: 2em 0;
+}
+
+.carousel__back-button,
+.carousel__next-button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 2.5em;
+  height: 2.5em;
+  font-size: 1.2em;
+  margin: 0 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.carousel__back-button:hover,
+.carousel__next-button:hover {
+  background: #1e40af;
+}
+
+.dark-mode-toggle {
+  position: fixed;
+  top: 1.5em;
+  right: 2em;
+  background: none;
+  border: 2px solid #222;
+  outline: none;
+  cursor: pointer;
+  z-index: 1000;
+  padding: 0.3em;
+  border-radius: 10px;
+  transition: background 0.2s, border-color 0.2s;
+  color: #fbbf24;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark-mode-toggle:hover {
+  background: #f1f5f9;
+}
+
+body.dark {
+  background: #000;
+  color: #f3f4f6;
+}
+
+body.dark #jsonForm {
+  background: #23272f;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+
+body.dark #jsonEntry {
+  background: #18181b;
+  border: 1px solid #334155;
+  color: #f3f4f6;
+}
+
+body.dark .error {
+  background: #7f1d1d;
+  color: #fee2e2;
+  border: 1px solid #b91c1c;
+}
+
+body.dark .dark-mode-toggle {
+  border: 2px solid #fff;
+  background: none;
+  color: #fbbf24;
+}
+
+body.dark .dark-mode-toggle:hover {
+  background: #18181b;
+}
+
+body.dark .carousel__slider {
+  background: #23272f;
+}
+
+body.dark .carousel__back-button,
+body.dark .carousel__next-button {
+  background: #334155;
+  color: #f3f4f6;
+}
+
+body.dark .carousel__back-button:hover,
+body.dark .carousel__next-button:hover {
+  background: #1e293b;
+}
+
+.app-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clocks-center {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 0.5em;
+}
+
+.fullscreen-icon-btn {
+  background: none;
+  border: none;
+  padding: 0.3em 0.5em;
+  border-radius: 8px;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background 0.2s;
+  color: #2563eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.2em;
+}
+
+.fullscreen-icon-btn:hover {
+  background: #e0e7ef;
+}
+
+body.dark .fullscreen-icon-btn {
+  color: #60a5fa;
+}
+
+body.dark .fullscreen-icon-btn:hover {
+  background: #23272f;
+}
+
+.preview-pill {
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 2em 1em 1.5em 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 200px;
+  min-width: 0;
+}
+
+body.dark .preview-pill {
+  background: #18181b;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+
+.preview-pill .error {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 1em 0 0 0;
+  word-break: break-word;
 }

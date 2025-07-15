@@ -1,4 +1,4 @@
-import { ComponentType, FunctionComponent, useMemo } from 'react';
+import { ComponentType, FunctionComponent, useMemo, useEffect } from 'react';
 import { ClockLayer, ClockLayerType } from '../open-clock';
 import TextLayer from './TextLayer';
 import type { Assets, LayerProps } from './LayerProps';
@@ -25,17 +25,15 @@ interface Props {
   layer: ClockLayer;
   assets: Assets;
   debug?: boolean;
+  onMissingImage?: (name: string) => void;
+  onMissingFont?: (name: string) => void;
 }
 
 /**
  * Render a single clock layer using the appropriate component.
  *
- * @param ratio - Overall clock ratio used to scale positions.
- * @param layer - Layer definition from the Open Clock Standard.
- * @param assets - Map of image assets available to the layer.
- * @param debug - Display debugging helpers when true.
+ * @param theta
  */
-
 const radiansToDegrees = (theta: string | number): number => {
   const rads = typeof theta === 'number' ? theta : Number(theta);
   return (rads * 180) / Math.PI;
@@ -46,6 +44,8 @@ const Layer: FunctionComponent<Props> = ({
   layer,
   assets,
   debug = false,
+  onMissingImage,
+  onMissingFont,
 }) => {
   const position = useMemo(
     () => ({
@@ -54,20 +54,46 @@ const Layer: FunctionComponent<Props> = ({
     }),
     [ratio, layer.horizontalPosition, layer.verticalPosition]
   );
+
+  // Check for missing images in this layer
+  useEffect(() => {
+    // Check if this layer references an image that isn't in assets
+    if (onMissingImage && layer.imageFilename && layer.imageFilename.trim() !== '') {
+      if (!assets[layer.imageFilename]) {
+        console.log(`Missing image detected: ${layer.imageFilename}`);
+        onMissingImage(layer.imageFilename);
+      }
+    }
+
+    // Check for hand layers with image hands
+    if (onMissingImage && layer.type === ClockLayerType.Hand &&
+        layer.handOptions?.useImage &&
+        layer.handOptions.imageFilename &&
+        layer.handOptions.imageFilename.trim() !== '') {
+      if (!assets[layer.handOptions.imageFilename]) {
+        console.log(`Missing hand image detected: ${layer.handOptions.imageFilename}`);
+        onMissingImage(layer.handOptions.imageFilename);
+      }
+    }
+  }, [layer, assets, onMissingImage]);
+
   if (layer.isHidden) {
     return null;
   }
+
   const LayerType = layerTypes[layer.type];
   if (LayerType === undefined) {
     // not implemented yet
     return null;
   }
+
   const transform =
     layer.angleOffset === '0.0'
       ? undefined
       : `rotate(${radiansToDegrees(layer.angleOffset)},${position.x},${
           position.y
         })`;
+
   return (
     <g opacity={layer.alpha} transform={transform}>
       {debug && (
@@ -79,7 +105,12 @@ const Layer: FunctionComponent<Props> = ({
           cy={position.y}
         />
       )}
-      <LayerType assets={assets} position={position} layer={layer} />
+      <LayerType
+        assets={assets}
+        position={position}
+        layer={layer}
+        onMissingFont={onMissingFont}
+      />
     </g>
   );
 };

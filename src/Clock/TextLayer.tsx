@@ -1,4 +1,4 @@
-import { CSSProperties, FunctionComponent, memo } from 'react';
+import { CSSProperties, FunctionComponent, memo, useEffect } from 'react';
 import type { Property } from 'csstype';
 import {
   ChronoField,
@@ -18,6 +18,7 @@ import {
   ClockLayerTextOptionsDateTimeFormat as Format,
   ClockLayerType,
 } from '../open-clock';
+import { useFontCheck } from './useFontCheck';
 
 interface DateTimeTextProps {
   dateTimeFormat?: Format;
@@ -126,18 +127,37 @@ const DateTimeText: FunctionComponent<DateTimeTextProps> = ({
  *
  * @param position - Calculated x/y position of the text.
  * @param layer - The clock layer configuration.
+ * @param onMissingFont - Optional callback to report missing fonts.
  */
 const TextLayer: FunctionComponent<LayerProps> = ({
   position: { x, y },
   layer,
+  onMissingFont,
 }) => {
   if (!layer.textOptions) {
     return null;
   }
 
+  const fontFamily = layer.textOptions.fontFamily;
+  const { isLoaded, errorMessage } = useFontCheck(fontFamily);
+
+  // Report missing font to the parent component
+  useEffect(() => {
+    if (
+      !isLoaded &&
+      errorMessage &&
+      fontFamily &&
+      fontFamily.trim() !== '' &&
+      onMissingFont
+    ) {
+      console.log(`Detected missing font: "${fontFamily}"`);
+      onMissingFont(fontFamily);
+    }
+  }, [isLoaded, errorMessage, fontFamily, onMissingFont]);
+
   const style: CSSProperties = {
     textTransform: textTransforms[layer.textOptions.casingType],
-    fontFamily: layer.textOptions.fontFamily,
+    fontFamily: !isLoaded && errorMessage ? 'sans-serif' : fontFamily || 'sans-serif',
     fontSize: `${Number(layer.scale) * 46.5}px`,
     textAnchor: textAnchors[layer.textOptions.justification],
     fill: layer.fillColor,

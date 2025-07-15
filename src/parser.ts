@@ -27,7 +27,9 @@ const parser = (json: string): ParseResult => {
       return { errors };
     }
   } catch (e) {
-    return { exception: e.message };
+    return {
+      exception: e instanceof Error ? e.message : String(e),
+    };
   }
 };
 
