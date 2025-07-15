@@ -19,12 +19,7 @@ interface Props {
 }
 
 /**
- * Display multiple clocks in a carousel, optionally fullscreenable.
- *
- * @param clocks - Array of parsed clock definitions to render.
- * @param height - Height of each clock in pixels.
- * @param ratio - Width/height ratio for each clock SVG.
- * @returns Carousel component showing the provided clocks.
+ * Display a carousel of clocks that can be swiped or navigated through.
  */
 const MultipleClocks: FunctionComponent<Props> = ({
   clocks,

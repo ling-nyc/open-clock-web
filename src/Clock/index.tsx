@@ -13,13 +13,7 @@ interface Props {
 }
 
 /**
- * Render a clock using the Open Clock Standard definition.
- *
- * @param clock - Parsed clock definition with optional assets.
- * @param ratio - Width/height ratio of the clock SVG.
- * @param height - Height of the rendered clock in pixels.
- * @param wrapper - When true, wrap the SVG in a positioned div.
- * @returns Clock SVG wrapped in an optional div.
+ * Render an Open Clock Standard definition as an SVG clock.
  */
 const Clock: FunctionComponent<Props> = ({
   clock,
@@ -54,6 +48,11 @@ const Clock: FunctionComponent<Props> = ({
       </svg>
     </MaybeWrapper>
   );
+};
+
+Clock.defaultProps = {
+  ratio: 0.82,
+  wrapper: true,
 };
 
 export default Clock;
