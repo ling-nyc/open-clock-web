@@ -12,6 +12,9 @@ interface Props {
   wrapper?: boolean;
 }
 
+/**
+ * Render an Open Clock Standard definition as an SVG clock.
+ */
 const Clock: FunctionComponent<Props> = ({
   clock,
   ratio = 0.82,

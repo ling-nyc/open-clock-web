@@ -9,18 +9,29 @@ import { ZonedDateTime } from '@js-joda/core';
 
 const TimeContext = createContext<ZonedDateTime>(ZonedDateTime.now());
 
+/** Access the current `ZonedDateTime` provided by `TimeProvider`. */
 export const useTime = () => useContext(TimeContext);
 export const TimeConsumer = TimeContext.Consumer;
 
+/**
+ * Provides the current time and updates precisely on second boundaries.
+ */
 export const TimeProvider: FunctionComponent = ({ children }) => {
   const [now, setNow] = useState(() => ZonedDateTime.now());
   useEffect(() => {
-    // TODO: synchronize so that the first update occurs at 0ms after a new second
-    const intervalId = setInterval(() => {
-      setNow(ZonedDateTime.now());
-    }, 1000);
+    const tick = () => setNow(ZonedDateTime.now());
 
-    return () => clearInterval(intervalId);
+    const delay = 1000 - (Date.now() % 1000);
+    let intervalId: NodeJS.Timeout | undefined;
+    const timeoutId = setTimeout(() => {
+      tick();
+      intervalId = setInterval(tick, 1000);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [setNow]);
 
   return <TimeContext.Provider value={now}>{children}</TimeContext.Provider>;

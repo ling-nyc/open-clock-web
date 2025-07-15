@@ -18,6 +18,9 @@ interface Props {
   ratio: number;
 }
 
+/**
+ * Display a carousel of clocks that can be swiped or navigated through.
+ */
 const MultipleClocks: FunctionComponent<Props> = ({
   clocks,
   height,

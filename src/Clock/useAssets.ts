@@ -1,4 +1,9 @@
 import { useState, useEffect } from 'react';
+
+/**
+ * Convert embedded clock assets to object URLs that can be used in image
+ * elements. Returned assets include image dimensions for convenience.
+ */
 import { decode } from 'base64-arraybuffer';
 import { ClockAsset } from '../open-clock';
 import type { Assets } from './LayerProps';
