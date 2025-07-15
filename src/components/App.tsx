@@ -18,6 +18,13 @@ const getMessage = (rs: ParseResult[]): string[] =>
     }
   });
 
+/**
+ * Render either a list of clocks or an error message based on parse results.
+ *
+ * @param parseResults - Results returned by the clock JSON parser.
+ * @param height - Height of each clock.
+ * @param ratio - Width/height ratio for the clocks.
+ */
 const ClocksOrError: FunctionComponent<{
   parseResults: ParseResult[];
   height?: number;
@@ -42,6 +49,9 @@ const ClocksOrError: FunctionComponent<{
   }
 };
 
+/**
+ * Top level application component providing the time context and file input.
+ */
 const App: FunctionComponent = () => {
   const [jsons, setJsons] = useState<string[]>([]);
   const parseResults = useMemo(() => jsons.map(parser), [jsons]);

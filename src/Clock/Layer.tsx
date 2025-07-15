@@ -27,6 +27,15 @@ interface Props {
   debug?: boolean;
 }
 
+/**
+ * Render a single clock layer using the appropriate component.
+ *
+ * @param ratio - Overall clock ratio used to scale positions.
+ * @param layer - Layer definition from the Open Clock Standard.
+ * @param assets - Map of image assets available to the layer.
+ * @param debug - Display debugging helpers when true.
+ */
+
 const radiansToDegrees = (theta: string | number): number => {
   const rads = typeof theta === 'number' ? theta : Number(theta);
   return (rads * 180) / Math.PI;

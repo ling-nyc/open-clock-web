@@ -9,9 +9,15 @@ import { ZonedDateTime } from '@js-joda/core';
 
 const TimeContext = createContext<ZonedDateTime>(ZonedDateTime.now());
 
+/**
+ * Access the current time updated every second.
+ */
 export const useTime = () => useContext(TimeContext);
 export const TimeConsumer = TimeContext.Consumer;
 
+/**
+ * Provide the current time to descendant components and update it every second.
+ */
 export const TimeProvider: FunctionComponent = ({ children }) => {
   const [now, setNow] = useState(() => ZonedDateTime.now());
   useEffect(() => {

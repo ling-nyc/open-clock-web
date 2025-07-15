@@ -1,6 +1,13 @@
 import type { FunctionComponent } from 'react';
 import type { LayerProps } from './LayerProps';
 
+/**
+ * Render an image layer defined in the clock specification.
+ *
+ * @param layer - Layer configuration including the image file name.
+ * @param assets - Map of available assets keyed by filename.
+ * @param position - Calculated x/y position of the layer.
+ */
 const ImageLayer: FunctionComponent<LayerProps> = ({
   layer: { imageFilename, scale },
   assets,

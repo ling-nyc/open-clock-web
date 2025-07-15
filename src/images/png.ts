@@ -12,6 +12,13 @@ export interface PngData {
 }
 
 // Returns an object with the width and height of the PNG image stored in bytes, or null if the bytes do not represent a PNG image. Only the first 29 bytes are necessary.
+/**
+ * Parse the header of a PNG image and return basic information if valid.
+ * Only the first 29 bytes are required.
+ *
+ * @param bytes - Raw image data.
+ * @returns PNG metadata or `undefined` when the data is not a PNG.
+ */
 export const readPngHeader = (bytes: Uint8Array): PngData | undefined => {
   if (bytes.byteLength < 29) {
     return undefined;

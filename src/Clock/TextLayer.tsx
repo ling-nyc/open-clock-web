@@ -121,6 +121,12 @@ const DateTimeText: FunctionComponent<DateTimeTextProps> = ({
   }
 };
 
+/**
+ * Render a text layer which may display static or formatted date/time text.
+ *
+ * @param position - Calculated x/y position of the text.
+ * @param layer - The clock layer configuration.
+ */
 const TextLayer: FunctionComponent<LayerProps> = ({
   position: { x, y },
   layer,

@@ -5,6 +5,13 @@ import { ClockLayerHandTypes as HandType } from '../../open-clock';
 import ImageHand from './ImageHand';
 import angleExtractors from './angleExtractors';
 
+/**
+ * Render an analog clock hand based on the current time.
+ *
+ * @param assets - Map of assets to use when rendering image hands.
+ * @param layer - Layer configuration describing the hand options.
+ * @param position - Position of the hand pivot point.
+ */
 const HandLayer: FunctionComponent<LayerProps> = ({
   assets,
   layer,

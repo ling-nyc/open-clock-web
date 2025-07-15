@@ -1,6 +1,16 @@
 import { FunctionComponent, useEffect, useRef } from 'react';
 import type { HandProps } from './types';
 
+/**
+ * SVG image-based clock hand with optional smooth animation.
+ *
+ * @param assets - Map of decoded assets used to look up the image.
+ * @param layer - Layer definition containing the image information.
+ * @param position - Center point of rotation for the hand.
+ * @param angle - Current rotation angle in degrees.
+ * @param handOptions - Additional hand options including anchor offsets.
+ * @param animationType - If "smooth", animate one second sweep.
+ */
 const ImageHand: FunctionComponent<HandProps> = ({
   assets,
   layer: { imageFilename, scale },

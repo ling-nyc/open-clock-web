@@ -23,6 +23,12 @@ const getDimensions = (
   return undefined;
 };
 
+/**
+ * Convert raw clock assets to a map of image dimensions and blob URLs.
+ *
+ * @param clockAssets - Assets from the parsed clock file.
+ * @returns Mapping from filename to decoded asset information.
+ */
 const clockAssetsToAssets = (clockAssets?: ClockAsset[]): Assets => {
   if (!clockAssets) {
     return {};
@@ -49,6 +55,14 @@ const clockAssetsToAssets = (clockAssets?: ClockAsset[]): Assets => {
   }
 };
 
+/**
+ * React hook that decodes and exposes assets for a clock.
+ *
+ * The returned assets are revoked automatically when the source list changes.
+ *
+ * @param clockAssets - Assets included with the clock JSON.
+ * @returns Map of image filename to asset information.
+ */
 export const useAssets = (clockAssets?: ClockAsset[]): Assets => {
   const [assets, setAssets] = useState<Assets>({});
 

@@ -10,6 +10,12 @@ interface Props {
   setJsons: (json: string[]) => void;
 }
 
+/**
+ * Provide a file picker for loading clock JSON files.
+ *
+ * @param jsons - Previously loaded JSON strings.
+ * @param setJsons - Callback invoked with the loaded file contents.
+ */
 const EntryArea: FunctionComponent<Props> = ({ setJsons }) => {
   const pickfileRef = useRef<HTMLInputElement>(null);
   const onFileClick = useCallback(() => {
