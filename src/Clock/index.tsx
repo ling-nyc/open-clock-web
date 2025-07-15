@@ -50,4 +50,9 @@ const Clock: FunctionComponent<Props> = ({
   );
 };
 
+Clock.defaultProps = {
+  ratio: 0.82,
+  wrapper: true,
+};
+
 export default Clock;

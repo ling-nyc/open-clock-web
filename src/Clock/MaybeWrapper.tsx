@@ -5,6 +5,11 @@ interface MaybeWrapperProps extends HTMLAttributes<HTMLDivElement> {
   render: boolean;
 }
 
+/**
+ * Conditionally wrap children in a div when `render` is true.
+ *
+ * Any additional props are passed to the wrapping div.
+ */
 const MaybeWrapper: FunctionComponent<MaybeWrapperProps> = ({
   render,
   children,
