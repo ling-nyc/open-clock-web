@@ -15,4 +15,16 @@ module.exports = {
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
   },
+  overrides: [
+    {
+      files: ['**/__tests__/**/*', '**/*.test.*', '**/*.spec.*'],
+      rules: {
+        'import/no-extraneous-dependencies': ['error', {
+          devDependencies: true,
+          optionalDependencies: false,
+          peerDependencies: false,
+        }],
+      },
+    },
+  ],
 };
