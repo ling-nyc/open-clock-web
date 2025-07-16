@@ -1,7 +1,7 @@
 import { FunctionComponent, useMemo, useState, useRef } from 'react';
 import parser, { ClockParseResult, ParseResult } from '../parser';
 import Clock from '../Clock';
-import { TimeProvider } from '../TimeContext';
+import { TimeProvider, useTimeContext } from '../TimeContext';
 import EntryArea from './EntryArea';
 import Fullscreenable from './Fullscreenable';
 import MultipleClocks from './MultipleClocks';
@@ -9,6 +9,7 @@ import DarkModeToggle from './DarkModeToggle';
 import { AssetWarningProvider } from '../Clock/AssetWarningContext';
 import './style.css';
 import FontCacheMenu from './FontCacheMenu';
+import TimeCustomizer from './TimeCustomizer';
 
 // Helper to make error messages user-friendly
 function formatErrorMessage(error: any): string {
@@ -94,15 +95,20 @@ const ClocksOrError: FunctionComponent<{
 };
 
 /**
- * Top level application component providing the time context and file input.
- * Handles the state for uploaded JSON clock data and parses it for rendering.
+ * Inner App component that has access to TimeContext
  */
-const App: FunctionComponent = () => {
+const AppInner: FunctionComponent = () => {
   // State to hold the uploaded JSON strings
   const [jsons, setJsons] = useState<string[]>([]);
+  // State for time customizer visibility (only used on mobile)
+  const [isTimeCustomizerVisible, setIsTimeCustomizerVisible] = useState(false);
+
   // Memoized parse results from the uploaded JSONs
   const parseResults = useMemo(() => jsons.map(parser), [jsons]);
   const fullscreenRef = useRef<HTMLDivElement>(null);
+
+  // Access time context
+  const { customTime, setCustomTime } = useTimeContext();
 
   // Helper to check if any clock or error is present
   const hasContent = parseResults.length > 0;
@@ -123,28 +129,53 @@ const App: FunctionComponent = () => {
 
   // Render the app with time context, file input, and clocks or error display
   return (
+    <div className="app-container">
+      {/* Font cache menu bottom left */}
+      <FontCacheMenu />
+      {/* Dark mode toggle button at top right */}
+      <DarkModeToggle />
+
+      {/* File input area for uploading JSON clock data, with fullscreen handler */}
+      <EntryArea
+        jsons={jsons}
+        setJsons={setJsons}
+        onFullscreen={handleFullscreen}
+      />
+
+      {/* Main content area with clock preview and time customizer */}
+      <div className="main-content">
+        {/* Only show preview pill if there is content (clock or error) */}
+        {hasContent && (
+          <div className="clocks-center">
+            <div ref={fullscreenRef} className="preview-pill">
+              <ClocksOrError parseResults={parseResults} />
+            </div>
+          </div>
+        )}
+
+        {/* Time customizer - always visible on desktop when content is present, toggle on mobile */}
+        {hasContent && (
+          <TimeCustomizer
+            customTime={customTime}
+            onTimeChange={setCustomTime}
+            isVisible={isTimeCustomizerVisible}
+            onToggle={() => setIsTimeCustomizerVisible(!isTimeCustomizerVisible)}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Top level application component providing the time context and file input.
+ * Handles the state for uploaded JSON clock data and parses it for rendering.
+ */
+const App: FunctionComponent = () => {
+  return (
     <TimeProvider>
       <AssetWarningProvider>
-        <div className="app-container">
-          {/* Font cache menu bottom left */}
-          <FontCacheMenu />
-          {/* Dark mode toggle button at top right */}
-          <DarkModeToggle />
-          {/* File input area for uploading JSON clock data, with fullscreen handler */}
-          <EntryArea
-            jsons={jsons}
-            setJsons={setJsons}
-            onFullscreen={handleFullscreen}
-          />
-          {/* Only show preview pill if there is content (clock or error) */}
-          <div className="clocks-center">
-            {hasContent && (
-              <div ref={fullscreenRef} className="preview-pill">
-                <ClocksOrError parseResults={parseResults} />
-              </div>
-            )}
-          </div>
-        </div>
+        <AppInner />
       </AssetWarningProvider>
     </TimeProvider>
   );

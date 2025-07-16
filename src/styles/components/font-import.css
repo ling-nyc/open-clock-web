@@ -1,0 +1,123 @@
+/* Font Import Popup Styles - Based on Time Customizer Design */
+.font-import-popup-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.35);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-import-popup {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  min-width: 320px;
+  color: #1f2937;
+}
+
+.font-import-popup h3 {
+  margin: 0 0 16px 0;
+  color: #1f2937;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.font-import-popup p {
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.font-import-popup .font-import-error {
+  color: #dc2626;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.font-import-popup input[type="file"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.font-import-popup input[type="file"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.font-import-popup button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.font-import-popup button:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.font-import-popup.drag-active {
+  border: 2px dashed #2563eb;
+  background: #e0e7ef;
+}
+
+/* Dark mode styles */
+body.dark .font-import-popup {
+  background: #23272f;
+  border: 1px solid #374151;
+  color: #f3f4f6;
+}
+
+body.dark .font-import-popup h3 {
+  color: #f3f4f6;
+}
+
+body.dark .font-import-popup p {
+  color: #e5e7eb;
+}
+
+body.dark .font-import-popup input[type="file"] {
+  background: #18181b;
+  border: 1px solid #374151;
+  color: #f3f4f6;
+}
+
+body.dark .font-import-popup input[type="file"]:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+body.dark .font-import-popup button {
+  background: #60a5fa;
+  color: #18181b;
+}
+
+body.dark .font-import-popup button:hover {
+  background: #3b82f6;
+  color: white;
+}
+
+body.dark .font-import-popup.drag-active {
+  border: 2px dashed #60a5fa;
+  background: #374151;
+}

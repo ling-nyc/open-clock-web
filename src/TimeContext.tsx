@@ -8,20 +8,37 @@ import {
 import { ZonedDateTime } from '@js-joda/core';
 import { ReactNode } from 'react';
 
-const TimeContext = createContext<ZonedDateTime>(ZonedDateTime.now());
+interface TimeContextType {
+  time: ZonedDateTime;
+  setCustomTime: (time: ZonedDateTime | null) => void;
+  customTime: ZonedDateTime | null;
+}
 
-/** Access the current `ZonedDateTime` provided by `TimeProvider`. */
-export const useTime = () => useContext(TimeContext);
+const TimeContext = createContext<TimeContextType>({
+  time: ZonedDateTime.now(),
+  setCustomTime: () => {},
+  customTime: null,
+});
+
+/** Access the current `ZonedDateTime` and custom time controls provided by `TimeProvider`. */
+export const useTime = () => useContext(TimeContext).time;
+export const useTimeContext = () => useContext(TimeContext);
 export const TimeConsumer = TimeContext.Consumer;
 
 /**
  * Provides the current time and updates precisely on second boundaries.
+ * Also supports custom time override for preview purposes.
  */
 export const TimeProvider: FunctionComponent<{ children: ReactNode }> = ({
   children,
 }) => {
   const [now, setNow] = useState(() => ZonedDateTime.now());
+  const [customTime, setCustomTime] = useState<ZonedDateTime | null>(null);
+
   useEffect(() => {
+    // Only run real-time updates if no custom time is set
+    if (customTime) return;
+
     const tick = () => setNow(ZonedDateTime.now());
 
     const delay = 1000 - (Date.now() % 1000);
@@ -35,7 +52,13 @@ export const TimeProvider: FunctionComponent<{ children: ReactNode }> = ({
       clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
     };
-  }, [setNow]);
+  }, [customTime]);
 
-  return <TimeContext.Provider value={now}>{children}</TimeContext.Provider>;
+  const contextValue = {
+    time: customTime || now,
+    setCustomTime,
+    customTime,
+  };
+
+  return <TimeContext.Provider value={contextValue}>{children}</TimeContext.Provider>;
 };

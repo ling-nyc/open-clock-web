@@ -18,12 +18,11 @@ const ImageLayer: FunctionComponent<LayerProps> = ({
 
   // Report missing image to the warning context
   useEffect(() => {
-    // Only report if there's actually an image filename specified but missing from assets
     if (imageFilename && imageFilename.trim() !== '' && !asset) {
       console.log(`Detected missing image: "${imageFilename}"`);
       addWarning({ type: 'image', name: imageFilename });
     }
-  }, [asset, imageFilename, addWarning]);
+  }, [imageFilename, asset, addWarning]); // Reorder dependencies to put the ones that change most often first
 
   // If no image filename specified or no asset found, render nothing
   if (!imageFilename || !asset) {

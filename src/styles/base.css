@@ -1,0 +1,65 @@
+/* Base Layout and Global Styles */
+body {
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+  min-height: 100vh;
+  margin: 0;
+  color: #222;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Center main content */
+body > #root > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+}
+
+/* Main content layout */
+.main-content {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Mobile layout - stack vertically */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+.app-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clocks-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 0.5em;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Dark mode */
+body.dark {
+  background: #000;
+  color: #f3f4f6;
+}
