@@ -1,4 +1,4 @@
-import { CSSProperties, FunctionComponent, memo, useEffect } from 'react';
+import { CSSProperties, FunctionComponent, useEffect } from 'react';
 import type { Property } from 'csstype';
 import {
   ChronoField,
@@ -173,4 +173,4 @@ const TextLayer: FunctionComponent<LayerProps> = ({
   );
 };
 
-export default memo(TextLayer);
+export default TextLayer;

@@ -1,4 +1,4 @@
-import { ComponentType, FunctionComponent, useMemo } from 'react';
+import { ComponentType, FunctionComponent, useMemo, useEffect } from 'react';
 import { ClockLayer, ClockLayerType } from '../open-clock';
 import TextLayer from './TextLayer';
 import type { Assets, LayerProps } from './LayerProps';
@@ -54,6 +54,37 @@ const Layer: FunctionComponent<Props> = ({
     }),
     [ratio, layer.horizontalPosition, layer.verticalPosition]
   );
+
+  // Check for missing images in this layer
+  useEffect(() => {
+    // Check if this layer references an image that isn't in assets
+    if (
+      onMissingImage &&
+      layer.imageFilename &&
+      layer.imageFilename.trim() !== ''
+    ) {
+      if (!assets[layer.imageFilename]) {
+        console.log(`Missing image detected: ${layer.imageFilename}`);
+        onMissingImage(layer.imageFilename);
+      }
+    }
+
+    // Check for hand layers with image hands
+    if (
+      onMissingImage &&
+      layer.type === ClockLayerType.Hand &&
+      layer.handOptions?.useImage &&
+      layer.handOptions.imageFilename &&
+      layer.handOptions.imageFilename.trim() !== ''
+    ) {
+      if (!assets[layer.handOptions.imageFilename]) {
+        console.log(
+          `Missing hand image detected: ${layer.handOptions.imageFilename}`
+        );
+        onMissingImage(layer.handOptions.imageFilename);
+      }
+    }
+  }, [layer, assets, onMissingImage]);
 
   if (layer.isHidden) {
     return null;

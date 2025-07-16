@@ -56,19 +56,19 @@ const FontCacheMenu: React.FC<{ onCacheChange?: () => void }> = ({ onCacheChange
 
   return (
     <div className={`font-cache-menu${open ? ' open' : ''}`}
-      style={{
-        position: 'fixed',
-        right: 16,
-        bottom: 16,
-        zIndex: 1000,
-        fontSize: '1em',
-        color: 'var(--font-cache-color, #222)',
-        background: 'none',
-        border: 'none',
-        minWidth: 0,
-        boxShadow: 'none',
-        padding: 0,
-      }}
+         style={{
+           position: 'fixed',
+           right: 16,
+           bottom: 16,
+           zIndex: 1000,
+           fontSize: '1em',
+           color: 'var(--font-cache-color, #222)',
+           background: 'none',
+           border: 'none',
+           minWidth: 0,
+           boxShadow: 'none',
+           padding: 0,
+         }}
     >
       <button
         className="font-cache-toggle"
@@ -131,4 +131,4 @@ const FontCacheMenu: React.FC<{ onCacheChange?: () => void }> = ({ onCacheChange
   );
 };
 
-export default FontCacheMenu; 
+export default FontCacheMenu;

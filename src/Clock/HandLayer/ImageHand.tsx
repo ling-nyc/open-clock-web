@@ -1,6 +1,5 @@
 import { FunctionComponent, useEffect, useRef } from 'react';
 import type { HandProps } from './types';
-import { useAssetWarnings } from '../AssetWarningContext';
 
 /**
  * SVG image-based clock hand with optional smooth animation.
@@ -18,9 +17,7 @@ const ImageHand: FunctionComponent<HandProps> = ({
   handOptions: { imageAnchorX, imageAnchorY },
   animationType,
 }) => {
-  const { addWarning } = useAssetWarnings();
   const ref = useRef<SVGImageElement | null>(null);
-
   useEffect(() => {
     if (animationType === 'smooth') {
       const anim = ref.current?.animate(
@@ -40,15 +37,6 @@ const ImageHand: FunctionComponent<HandProps> = ({
   }, [ref, angle, x, y, animationType]);
 
   const asset = assets[imageFilename];
-
-  // Report missing hand image to the warning context
-  useEffect(() => {
-    if (imageFilename && imageFilename.trim() !== '' && !asset) {
-      console.log(`Detected missing hand image: "${imageFilename}"`);
-      addWarning({ type: 'image', name: imageFilename });
-    }
-  }, [asset, imageFilename, addWarning]);
-
   if (!asset) {
     return null;
   }
