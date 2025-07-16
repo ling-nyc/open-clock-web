@@ -1,4 +1,4 @@
-import { render, screen as testScreen } from '@testing-library/react';
+import { render, screen as testingScreen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Clock from '../Clock';
 import {
@@ -44,5 +44,5 @@ const mockClock: ClockWrapper = {
 
 test('renders clock text', () => {
   render(<Clock clock={mockClock} height={100} wrapper={false} />);
-  expect(testScreen.getByText('hello world')).toBeInTheDocument();
+  expect(testingScreen.getByText('hello world')).toBeInTheDocument();
 });

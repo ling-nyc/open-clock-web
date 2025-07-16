@@ -9,8 +9,9 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["ES2019", "DOM"]
+    "lib": ["ES2019", "DOM"],
+    "types": ["jest", "@testing-library/jest-dom", "node"]
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "jest.setup.ts"]
 }

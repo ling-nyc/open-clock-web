@@ -111,6 +111,11 @@ export interface ClockLayerHandOptions {
   imageAnchorY: string;
 
   /**
+   * filename of the image to use for the hand when useImage is true
+   */
+  imageFilename?: string;
+
+  /**
    * use images instead of vectors
    */
   useImage: boolean;

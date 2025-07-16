@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { TimeProvider, useTime } from '../TimeContext';
 
