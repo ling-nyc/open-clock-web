@@ -267,3 +267,202 @@ body.dark .preview-pill {
   margin: 1em 0 0 0;
   word-break: break-word;
 }
+
+.font-cache-menu {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000;
+  font-size: 1em;
+  color: #222;
+  background: none;
+  border: none;
+  min-width: 0;
+  box-shadow: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.font-cache-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  font-weight: 600;
+  font-size: 1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  font-family: inherit;
+  transition: color 0.2s;
+}
+
+.font-cache-toggle:focus {
+  outline: 2px solid #2563eb;
+}
+
+.font-cache-menu.open .font-cache-toggle {
+  color: #2563eb;
+}
+
+.font-cache-toggle span {
+  display: inline-block;
+  transition: transform 0.2s;
+  font-size: 1.1em;
+}
+
+.font-cache-list {
+  margin-top: 6px;
+  font-weight: 400;
+  font-size: 0.97em;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  min-width: 120px;
+}
+
+.font-cache-list ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.font-cache-list li {
+  margin-bottom: 2px;
+  font-size: 0.98em;
+  color: #333;
+  font-family: inherit;
+}
+
+.font-cache-list div {
+  color: #888;
+  margin-top: 4px;
+  font-size: 0.93em;
+}
+
+body.dark .font-cache-menu {
+  color: #f3f4f6;
+}
+
+body.dark .font-cache-toggle {
+  color: #f3f4f6;
+}
+
+body.dark .font-cache-menu.open .font-cache-toggle {
+  color: #60a5fa;
+}
+
+body.dark .font-cache-list li {
+  color: #e5e7eb;
+}
+
+body.dark .font-cache-list div {
+  color: #a3a3a3;
+}
+
+.font-import-popup-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.35);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-import-popup {
+  background: #fff;
+  padding: 32px;
+  border-radius: 12px;
+  min-width: 320px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  color: #222;
+}
+
+.font-import-popup h3 {
+  margin-top: 0;
+}
+
+.font-import-popup .font-import-error {
+  color: #dc2626;
+  margin-top: 8px;
+}
+
+.font-import-popup button {
+  margin-top: 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5em 1.2em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.font-import-popup button:hover {
+  background: #1d4ed8;
+}
+
+body.dark .font-import-popup {
+  background: #23272f;
+  color: #f3f4f6;
+}
+
+body.dark .font-import-popup button {
+  background: #60a5fa;
+  color: #18181b;
+}
+
+body.dark .font-import-popup button:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+.font-cache-clear {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.97em;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 8px;
+  padding: 0;
+  text-decoration: underline;
+  display: block;
+  transition: color 0.2s;
+}
+.font-cache-clear:disabled {
+  color: #aaa;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+body.dark .font-cache-clear {
+  color: #f87171;
+}
+body.dark .font-cache-clear:disabled {
+  color: #444;
+}
+
+.font-import-popup.drag-active {
+  border: 2px dashed #2563eb;
+  background: #e0e7ef;
+}
+body.dark .font-import-popup.drag-active {
+  border: 2px dashed #60a5fa;
+  background: #23272f;
+}
+
+#jsonForm.drag-active {
+  border: 2px dashed #2563eb;
+  background: #e0e7ef;
+}
+body.dark #jsonForm.drag-active {
+  border: 2px dashed #60a5fa;
+  background: #23272f;
+}

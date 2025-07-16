@@ -8,6 +8,7 @@ import MultipleClocks from './MultipleClocks';
 import DarkModeToggle from './DarkModeToggle';
 import { AssetWarningProvider } from '../Clock/AssetWarningContext';
 import './style.css';
+import FontCacheMenu from './FontCacheMenu';
 
 // Helper to make error messages user-friendly
 function formatErrorMessage(error: any): string {
@@ -125,6 +126,8 @@ const App: FunctionComponent = () => {
     <TimeProvider>
       <AssetWarningProvider>
         <div className="app-container">
+          {/* Font cache menu bottom left */}
+          <FontCacheMenu />
           {/* Dark mode toggle button at top right */}
           <DarkModeToggle />
           {/* File input area for uploading JSON clock data, with fullscreen handler */}

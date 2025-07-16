@@ -5,6 +5,7 @@ import {
   useRef,
 } from 'react';
 import SampleDropdown from './SampleDropdown';
+import React, { useState } from 'react';
 
 interface Props {
   jsons?: string[];
@@ -46,6 +47,8 @@ const FullscreenIcon = () => (
 const EntryArea: FunctionComponent<Props> = ({ setJsons, onFullscreen }) => {
   // Ref to the hidden file input element
   const pickfileRef = useRef<HTMLInputElement>(null);
+  // State for drag-and-drop
+  const [dragActive, setDragActive] = useState(false);
   // Handler to trigger the file input dialog
   const onFileClick = useCallback(() => {
     pickfileRef.current?.click();
@@ -62,8 +65,34 @@ const EntryArea: FunctionComponent<Props> = ({ setJsons, onFullscreen }) => {
     [setJsons]
   );
 
+  // Handler for drag-and-drop
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(true);
+  };
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
+  };
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
+    const files = Array.from(e.dataTransfer.files).filter(f =>
+      f.name.endsWith('.ocs') || f.name.endsWith('.json')
+    );
+    if (files.length > 0) {
+      Promise.all(files.map(file => file.text())).then((jsons) => setJsons(jsons as string[]));
+    }
+  };
+
   return (
-    <form id="jsonForm">
+    <form
+      id="jsonForm"
+      className={dragActive ? 'drag-active' : ''}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <label
         style={{
           position: 'relative',

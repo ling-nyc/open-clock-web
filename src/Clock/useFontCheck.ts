@@ -14,6 +14,15 @@ export function useFontCheck(fontFamily: string | undefined) {
     errorMessage: null,
   });
 
+  function getCachedFonts() {
+    try {
+      const raw = localStorage.getItem('userFontCache');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
   useEffect(() => {
     if (!fontFamily) {
       setFontStatus({ isLoaded: true, errorMessage: null });
@@ -38,7 +47,26 @@ export function useFontCheck(fontFamily: string | undefined) {
         document.body.removeChild(testElement);
 
         if (!isFontLoaded) {
-          console.warn(`Font not loaded: ${fontFamily}`);
+          // Try to load from cache
+          const cached = getCachedFonts().find((f: { name: string }) => f.name === fontFamily);
+          if (cached) {
+            // Dynamically load the font
+            const fontFace = new FontFace(
+              cached.name,
+              `url(data:font/${cached.type};base64,${cached.data})`,
+              { style: 'normal', weight: '400' }
+            );
+            fontFace.load().then(loadedFace => {
+              (document.fonts as any).add(loadedFace);
+              setFontStatus({ isLoaded: true, errorMessage: null });
+            }).catch(() => {
+              setFontStatus({
+                isLoaded: false,
+                errorMessage: `Font "${fontFamily}" could not be loaded from cache`,
+              });
+            });
+            return;
+          }
           setFontStatus({
             isLoaded: false,
             errorMessage: `Font "${fontFamily}" not available`,
