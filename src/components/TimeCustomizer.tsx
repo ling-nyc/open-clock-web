@@ -29,6 +29,36 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
     setIsOpen(!isMobile);
   }, [isMobile]);
 
+  // Helper functions defined before usage
+  const updateCustomTimeWithValues = (h: number, m: number, s: number) => {
+    const now = ZonedDateTime.now();
+    const newCustomTime = now
+      .withHour(h)
+      .withMinute(m)
+      .withSecond(s)
+      .withNano(0);
+    onTimeChange(newCustomTime);
+  };
+
+  const handleStopAnimation = () => {
+    setIsAnimating(false);
+    if ((window as any).timeAnimationInterval) {
+      clearInterval((window as any).timeAnimationInterval);
+      (window as any).timeAnimationInterval = null;
+    }
+  };
+
+  const updateCustomTime = () => {
+    handleStopAnimation(); // Stop any existing animation
+    const now = ZonedDateTime.now();
+    const newCustomTime = now
+      .withHour(customHour)
+      .withMinute(customMinute)
+      .withSecond(customSecond)
+      .withNano(0);
+    onTimeChange(newCustomTime);
+  };
+
   const handleToggle = () => {
     setIsOpen(prev => !prev);
     if (onToggleVisibility) {
@@ -68,25 +98,6 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
     (window as any).timeAnimationInterval = interval;
   };
 
-  const handleStopAnimation = () => {
-    setIsAnimating(false);
-    if ((window as any).timeAnimationInterval) {
-      clearInterval((window as any).timeAnimationInterval);
-      (window as any).timeAnimationInterval = null;
-    }
-  };
-
-  const updateCustomTime = () => {
-    handleStopAnimation(); // Stop any existing animation
-    const now = ZonedDateTime.now();
-    const customTime = now
-      .withHour(customHour)
-      .withMinute(customMinute)
-      .withSecond(customSecond)
-      .withNano(0);
-    onTimeChange(customTime);
-  };
-
   // Convert time to total seconds for slider
   const timeToSeconds = (h: number, m: number, s: number) => h * 3600 + m * 60 + s;
   const secondsToTime = (totalSeconds: number) => {
@@ -98,31 +109,21 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
 
   // Mobile-friendly individual input handlers
   const handleHourChange = (value: string) => {
-    const hour = Math.max(0, Math.min(23, parseInt(value) || 0));
+    const hour = Math.max(0, Math.min(23, parseInt(value, 10) || 0));
     setCustomHour(hour);
     if (isCustomTime) updateCustomTimeWithValues(hour, customMinute, customSecond);
   };
 
   const handleMinuteChange = (value: string) => {
-    const minute = Math.max(0, Math.min(59, parseInt(value) || 0));
+    const minute = Math.max(0, Math.min(59, parseInt(value, 10) || 0));
     setCustomMinute(minute);
     if (isCustomTime) updateCustomTimeWithValues(customHour, minute, customSecond);
   };
 
   const handleSecondChange = (value: string) => {
-    const second = Math.max(0, Math.min(59, parseInt(value) || 0));
+    const second = Math.max(0, Math.min(59, parseInt(value, 10) || 0));
     setCustomSecond(second);
     if (isCustomTime) updateCustomTimeWithValues(customHour, customMinute, second);
-  };
-
-  const updateCustomTimeWithValues = (h: number, m: number, s: number) => {
-    const now = ZonedDateTime.now();
-    const customTime = now
-      .withHour(h)
-      .withMinute(m)
-      .withSecond(s)
-      .withNano(0);
-    onTimeChange(customTime);
   };
 
   const handleTimeInputChange = (value: string) => {
@@ -132,10 +133,10 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
     
     if (match) {
       const [, h, m, s] = match;
-      const hour = Math.max(0, Math.min(23, parseInt(h)));
-      const minute = Math.max(0, Math.min(59, parseInt(m)));
-      const second = Math.max(0, Math.min(59, parseInt(s)));
-      
+      const hour = Math.max(0, Math.min(23, parseInt(h, 10)));
+      const minute = Math.max(0, Math.min(59, parseInt(m, 10)));
+      const second = Math.max(0, Math.min(59, parseInt(s, 10)));
+
       setCustomHour(hour);
       setCustomMinute(minute);
       setCustomSecond(second);
@@ -188,12 +189,13 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
       {/* Mobile toggle button with better status display */}
       {isMobile && (
         <button
+          type="button"
           className="time-customizer-toggle"
           onClick={handleToggle}
           aria-expanded={isOpen}
         >
           <span className="time-status-indicator">
-            <span className={`status-dot ${isCustomTime ? (isAnimating ? 'animating' : 'custom') : 'live'}`}></span>
+            <span className={`status-dot ${isCustomTime ? (isAnimating ? 'animating' : 'custom') : 'live'}`} />
             {isCustomTime ? (isAnimating ? 'Animating' : 'Custom') : 'Live Time'}
           </span>
           <span className="current-time-display">
@@ -221,6 +223,7 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
           {/* Mode toggle buttons with clearer labels */}
           <div className="time-mode-controls">
             <button
+              type="button"
               className={`time-mode-btn ${!isCustomTime ? 'active' : ''}`}
               onClick={handleUseRealTime}
             >
@@ -228,6 +231,7 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
               Live Time
             </button>
             <button
+              type="button"
               className={`time-mode-btn ${isCustomTime && !isAnimating ? 'active' : ''}`}
               onClick={handleUseCustomTime}
             >
@@ -309,7 +313,7 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
                   min="0"
                   max="86399"
                   value={timeToSeconds(customHour, customMinute, customSecond)}
-                  onChange={(e) => handleSliderChange(parseInt(e.target.value))}
+                  onChange={(e) => handleSliderChange(parseInt(e.target.value, 10))}
                   className="time-slider"
                   disabled={!isCustomTime}
                 />
@@ -320,6 +324,7 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
           {/* Animation controls with better mobile layout */}
           <div className="animation-controls">
             <button
+              type="button"
               className={`animation-btn ${isAnimating ? 'active' : ''}`}
               onClick={isAnimating ? handleStopAnimation : handleStartTime}
               title={isAnimating ? 'Pause time animation' : 'Start time animation from current time'}
@@ -334,11 +339,12 @@ const TimeCustomizer: React.FC<TimeCustomizerProps> = ({
 
           {/* Quick presets with more intuitive times for mobile */}
           <div className="time-presets">
-            <label>Quick Times:</label>
-            <div className={`preset-buttons ${isMobile ? 'mobile-presets' : ''}`}>
+            <label htmlFor="preset-buttons">Quick Times:</label>
+            <div id="preset-buttons" className={`preset-buttons ${isMobile ? 'mobile-presets' : ''}`}>
               {presetTimes.map((preset, index) => (
                 <button
                   key={index}
+                  type="button"
                   className="preset-btn"
                   onClick={() => handlePresetClick(preset.hour, preset.minute, preset.second)}
                 >
