@@ -1,6 +1,5 @@
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent } from 'react';
 import type { LayerProps } from './LayerProps';
-import { useAssetWarnings } from './AssetWarningContext';
 
 /**
  * Render an image layer defined in the clock specification.
@@ -13,17 +12,7 @@ const ImageLayer: FunctionComponent<LayerProps> = ({
   assets,
   position: { x, y },
 }) => {
-  const { addWarning } = useAssetWarnings();
   const asset = assets[imageFilename];
-
-  // Report missing image to the warning context
-  useEffect(() => {
-    // Only report if there's actually an image filename specified but missing from assets
-    if (imageFilename && imageFilename.trim() !== '' && !asset) {
-      console.log(`Detected missing image: "${imageFilename}"`);
-      addWarning({ type: 'image', name: imageFilename });
-    }
-  }, [asset, imageFilename, addWarning]);
 
   // If no image filename specified or no asset found, render nothing
   if (!imageFilename || !asset) {

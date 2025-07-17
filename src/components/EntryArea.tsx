@@ -93,29 +93,29 @@ const EntryArea: FunctionComponent<Props> = ({ setJsons, onFullscreen }) => {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <label
+      <div
         style={{
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 0,
+          gap: 8,
         }}
       >
-        <span
+        <div
           style={{
             display: 'flex',
             alignItems: 'center',
             width: '100%',
             justifyContent: 'center',
+            gap: 8,
           }}
         >
-          {'Clock File (.json, .ocs): '}
+          <span>Clock File (.json, .ocs):</span>
           <button
             type="button"
             onClick={onFileClick}
             style={{
-              marginLeft: 8,
               zIndex: 1,
               padding: '0.4em 1.2em',
               borderRadius: 8,
@@ -140,15 +140,14 @@ const EntryArea: FunctionComponent<Props> = ({ setJsons, onFullscreen }) => {
               className="fullscreen-icon-btn"
               onClick={onFullscreen}
               aria-label="Fullscreen preview"
-              style={{ marginLeft: 8, zIndex: 1 }}
             >
               <FullscreenIcon />
             </button>
           )}
-        </span>
+        </div>
         {/* Sample Files button below Import, centered */}
         <SampleDropdown onSampleLoad={(text) => setJsons([text])} />
-      </label>
+      </div>
       <input
         ref={pickfileRef}
         id="pickfile"

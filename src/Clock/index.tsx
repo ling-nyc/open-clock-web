@@ -7,35 +7,7 @@ import { useAssets } from './useAssets';
 import { useAssetWarnings } from './AssetWarningContext';
 import React, { useState } from 'react';
 import { addFontToCache } from '../components/FontCacheMenu';
-
-// Add some basic styling for the warnings
-const styles = {
-  assetWarnings: {
-    marginTop: '10px',
-    marginBottom: '10px',
-  },
-  fontWarning: {
-    padding: '8px 12px',
-    backgroundColor: '#fff3cd',
-    border: '1px solid #ffeeba',
-    borderRadius: '4px',
-    color: '#856404',
-    fontSize: '14px',
-    marginBottom: '8px',
-  },
-  imageWarning: {
-    padding: '8px 12px',
-    backgroundColor: '#f8d7da',
-    border: '1px solid #f5c6cb',
-    borderRadius: '4px',
-    color: '#721c24',
-    fontSize: '14px',
-  },
-  warningLink: {
-    color: '#0366d6',
-    textDecoration: 'underline',
-  },
-};
+import Toast from '../components/Toast';
 
 interface Props {
   clock: ClockWrapper;
@@ -61,6 +33,11 @@ const Clock: FunctionComponent<Props> = ({
   const [importError, setImportError] = useState<string | null>(null);
   // State for drag-and-drop
   const [dragActive, setDragActive] = useState(false);
+  // State to track cancelled font imports to prevent reopening
+  const [, setCancelledFonts] = useState<Set<string>>(new Set());
+  // State for toast notifications
+  const [showFontToast, setShowFontToast] = useState(false);
+  const [showImageToast, setShowImageToast] = useState(false);
 
   // Calculate width and other layout properties
   const width = ratio * height;
@@ -75,6 +52,9 @@ const Clock: FunctionComponent<Props> = ({
   // Clear warnings when the clock changes
   useEffect(() => {
     clearWarnings();
+    setCancelledFonts(new Set());
+    setShowFontToast(false);
+    setShowImageToast(false);
   }, [clock, clearWarnings]);
 
   // Group warnings by type for display
@@ -86,6 +66,19 @@ const Clock: FunctionComponent<Props> = ({
     .filter((w) => w.type === 'image')
     .map((w) => w.name);
 
+  // Show toasts when warnings appear
+  useEffect(() => {
+    if (fontWarnings.length > 0 && !showFontToast) {
+      setShowFontToast(true);
+    }
+  }, [fontWarnings.length, showFontToast]);
+
+  useEffect(() => {
+    if (imageWarnings.length > 0 && !showImageToast) {
+      setShowImageToast(true);
+    }
+  }, [imageWarnings.length, showImageToast]);
+
   // Function to add a missing image warning
   const handleMissingImage = (name: string) => {
     addWarning({ type: 'image', name });
@@ -93,8 +86,22 @@ const Clock: FunctionComponent<Props> = ({
 
   // Function to add a missing font warning
   const handleMissingFont = (name: string) => {
+    // Don't show popup automatically anymore - just add warning
     addWarning({ type: 'font', name });
-    setImportFont(name);
+  };
+
+  // Function to handle font upload from toast
+  const handleFontUpload = (fontName: string) => {
+    setImportFont(fontName);
+  };
+
+  // Function to handle cancel button click
+  const handleCancel = () => {
+    if (importFont) {
+      setCancelledFonts((prev) => new Set(prev).add(importFont));
+    }
+    setImportFont(null);
+    setImportError(null);
   };
 
   const viewBox = `${-100 * ratio} -100 ${200 * ratio} 200`;
@@ -106,15 +113,15 @@ const Clock: FunctionComponent<Props> = ({
         <div className="font-import-popup-overlay">
           <div
             className={`font-import-popup${dragActive ? ' drag-active' : ''}`}
-            onDragOver={e => {
+            onDragOver={(e) => {
               e.preventDefault();
               setDragActive(true);
             }}
-            onDragLeave={e => {
+            onDragLeave={(e) => {
               e.preventDefault();
               setDragActive(false);
             }}
-            onDrop={e => {
+            onDrop={(e) => {
               e.preventDefault();
               setDragActive(false);
               const file = e.dataTransfer.files?.[0];
@@ -129,19 +136,26 @@ const Clock: FunctionComponent<Props> = ({
                 const result = ev.target?.result;
                 if (typeof result === 'string') {
                   const base64 = result.split(',')[1];
-                  addFontToCache({ name: importFont, type: 'truetype', data: base64 });
+                  addFontToCache({
+                    name: importFont,
+                    type: 'truetype',
+                    data: base64,
+                  });
                   window.dispatchEvent(new Event('fontcachechange'));
                   setImportFont(null);
                   setTimeout(() => window.location.reload(), 100);
                 }
               };
-              reader.onerror = () => setImportError('Failed to read font file.');
+              reader.onerror = () =>
+                setImportError('Failed to read font file.');
               reader.readAsDataURL(file);
             }}
           >
             <h3>Missing Font: {importFont}</h3>
             <p>
-              This clock uses a font that is not installed. Please import a .ttf file for <b>{importFont}</b> to display it correctly.<br />
+              This clock uses a font that is not installed. Please import a .ttf
+              file for <b>{importFont}</b> to display it correctly.
+              <br />
               <span style={{ fontSize: '0.97em', color: '#888' }}>
                 You can also drag and drop a .ttf file here.
               </span>
@@ -164,21 +178,50 @@ const Clock: FunctionComponent<Props> = ({
                   if (typeof result === 'string') {
                     // base64 encode
                     const base64 = result.split(',')[1];
-                    addFontToCache({ name: importFont, type: 'truetype', data: base64 });
+                    addFontToCache({
+                      name: importFont,
+                      type: 'truetype',
+                      data: base64,
+                    });
                     window.dispatchEvent(new Event('fontcachechange'));
                     setImportFont(null);
                     setTimeout(() => window.location.reload(), 100); // reload to refresh font usage
                   }
                 };
-                reader.onerror = () => setImportError('Failed to read font file.');
+                reader.onerror = () =>
+                  setImportError('Failed to read font file.');
                 reader.readAsDataURL(file);
               }}
             />
-            {importError && <div className="font-import-error">{importError}</div>}
-            <button onClick={() => setImportFont(null)}>Cancel</button>
+            {importError && (
+              <div className="font-import-error">{importError}</div>
+            )}
+            <button type="button" onClick={handleCancel}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
+
+      {/* Toast notifications */}
+      {showFontToast && fontWarnings.length > 0 && (
+        <Toast
+          type="warning"
+          title={`Missing ${fontWarnings.length === 1 ? 'Font' : 'Fonts'}`}
+          items={fontWarnings}
+          onClose={() => setShowFontToast(false)}
+          onUpload={handleFontUpload} // Use the correct prop name
+        />
+      )}
+      {showImageToast && imageWarnings.length > 0 && (
+        <Toast
+          type="error"
+          title={`Missing ${imageWarnings.length === 1 ? 'Image' : 'Images'}`}
+          items={imageWarnings}
+          onClose={() => setShowImageToast(false)}
+        />
+      )}
+
       <MaybeWrapper render={wrapper} style={style}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -198,66 +241,6 @@ const Clock: FunctionComponent<Props> = ({
           ))}
         </svg>
       </MaybeWrapper>
-
-      {/* Display warnings */}
-      <div style={styles.assetWarnings}>
-        {/* Font warnings first */}
-        {fontWarnings.length > 0 && (
-          <div style={styles.fontWarning}>
-            <p>
-              This file uses{' '}
-              {fontWarnings.length === 1
-                ? 'a font'
-                : `${fontWarnings.length} fonts`}{' '}
-              that {fontWarnings.length === 1 ? 'is' : 'are'} not available on
-              your system:
-              <strong
-                style={{
-                  fontWeight: 'bold',
-                  display: 'inline-block',
-                  marginLeft: '4px',
-                }}
-              >
-                {fontWarnings.join(', ')}
-              </strong>
-              . Missing fonts will be replaced with a default font, which may
-              affect the appearance.
-            </p>
-          </div>
-        )}
-
-        {/* Image warnings below, styled in red */}
-        {imageWarnings.length > 0 && (
-          <div style={styles.imageWarning}>
-            <p>
-              This file requests{' '}
-              {imageWarnings.length === 1
-                ? 'an image'
-                : `${imageWarnings.length} images`}{' '}
-              that {imageWarnings.length === 1 ? 'is' : 'are'} not included:
-              <strong
-                style={{
-                  fontWeight: 'bold',
-                  display: 'inline-block',
-                  marginLeft: '4px',
-                }}
-              >
-                {imageWarnings.join(', ')}
-              </strong>
-              . Check{' '}
-              <a
-                href="https://github.com/orff/OpenClockStandard"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ ...styles.warningLink, color: '#007bff' }}
-              >
-                Open Clock Standard documentation
-              </a>{' '}
-              for more information on embedding images.
-            </p>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
