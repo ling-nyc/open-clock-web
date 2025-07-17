@@ -34,7 +34,7 @@ export function useFontCheck(fontFamily: string | undefined) {
 
     const fontFace = new FontFace(
       font,
-      `url(/public/fonts/${fontInfo.path})`,
+      `url(/fonts/${fontInfo.path})`,
       { style: 'normal', weight: '400' }
     );
 

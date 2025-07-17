@@ -1,4 +1,4 @@
-import { FunctionComponent, useMemo, useState, useRef } from 'react';
+import { FunctionComponent, useMemo, useState, useRef, useEffect } from 'react';
 import parser, { ClockParseResult, ParseResult } from '../parser';
 import Clock from '../Clock';
 import { TimeProvider, useTimeContext } from '../TimeContext';
@@ -7,7 +7,6 @@ import Fullscreenable from './Fullscreenable';
 import MultipleClocks from './MultipleClocks';
 import DarkModeToggle from './DarkModeToggle';
 import { AssetWarningProvider } from '../Clock/AssetWarningContext';
-import './style.css';
 import FontCacheMenu from './FontCacheMenu';
 import TimeCustomizer from './TimeCustomizer';
 
@@ -102,6 +101,8 @@ const AppInner: FunctionComponent = () => {
   const [jsons, setJsons] = useState<string[]>([]);
   // State for time customizer visibility (only used on mobile)
   const [isTimeCustomizerVisible, setIsTimeCustomizerVisible] = useState(false);
+  // State to track if we're on mobile
+  const [isMobile, setIsMobile] = useState(false);
 
   // Memoized parse results from the uploaded JSONs
   const parseResults = useMemo(() => jsons.map(parser), [jsons]);
@@ -112,6 +113,17 @@ const AppInner: FunctionComponent = () => {
 
   // Helper to check if any clock or error is present
   const hasContent = parseResults.length > 0;
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Handler to trigger fullscreen on the preview
   const handleFullscreen = () => {
@@ -130,10 +142,21 @@ const AppInner: FunctionComponent = () => {
   // Render the app with time context, file input, and clocks or error display
   return (
     <div className="app-container">
-      {/* Font cache menu bottom left */}
+      {/* Font cache menu bottom right */}
       <FontCacheMenu />
       {/* Dark mode toggle button at top right */}
       <DarkModeToggle />
+      
+      {/* Mobile time customizer toggle - top left */}
+      {isMobile && hasContent && (
+        <button
+          className="mobile-time-toggle"
+          onClick={() => setIsTimeCustomizerVisible(!isTimeCustomizerVisible)}
+          aria-label="Toggle time customizer"
+        >
+          🕐
+        </button>
+      )}
 
       {/* File input area for uploading JSON clock data, with fullscreen handler */}
       <EntryArea
@@ -143,26 +166,23 @@ const AppInner: FunctionComponent = () => {
       />
 
       {/* Main content area with clock preview and time customizer */}
-      <div className="main-content">
-        {/* Only show preview pill if there is content (clock or error) */}
-        {hasContent && (
-          <div className="clocks-center">
-            <div ref={fullscreenRef} className="preview-pill">
-              <ClocksOrError parseResults={parseResults} />
-            </div>
-          </div>
-        )}
-
-        {/* Time customizer - always visible on desktop when content is present, toggle on mobile */}
-        {hasContent && (
+      {hasContent && (
+        <div className="main-content">
+          {/* Time customizer - left side on desktop, overlay on mobile */}
           <TimeCustomizer
             customTime={customTime}
             onTimeChange={setCustomTime}
-            isVisible={isTimeCustomizerVisible}
-            onToggle={() => setIsTimeCustomizerVisible(!isTimeCustomizerVisible)}
+            isMobile={isMobile}
+            isVisible={isMobile ? isTimeCustomizerVisible : true}
+            onToggleVisibility={() => setIsTimeCustomizerVisible(!isTimeCustomizerVisible)}
           />
-        )}
-      </div>
+          
+          {/* Clock preview - directly in main content */}
+          <div ref={fullscreenRef} className="preview-pill">
+            <ClocksOrError parseResults={parseResults} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

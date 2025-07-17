@@ -1,31 +1,31 @@
 /* Font faces for preloaded fonts - using standardized family names */
 @font-face {
   font-family: "TwoFiftySixBytes-Regular";
-  src: url("/public/fonts/256bytes.ttf") format("truetype");
+  src: url("/fonts/256bytes.ttf") format("truetype");
   font-display: swap;
 }
 
 @font-face {
   font-family: "28-SegmentLEDDisplay";
-  src: url("/public/fonts/28SEGLED.TTF") format("truetype");
+  src: url("/fonts/28SEGLED.TTF") format("truetype");
   font-display: swap;
 }
 
 @font-face {
   font-family: "AshcanBB";
-  src: url("/public/fonts/ashcanbb.ttf") format("truetype");
+  src: url("/fonts/ashcanbb.ttf") format("truetype");
   font-display: swap;
 }
 
 @font-face {
   font-family: "AunchantedXspaceThin";
-  src: url("/public/fonts/AUNCHANTED.TTF") format("truetype");
+  src: url("/fonts/AUNCHANTED.TTF") format("truetype");
   font-display: swap;
 }
 
 @font-face {
   font-family: "AzonixRegular";
-  src: url("/public/fonts/Azonix.otf") format("opentype");
+  src: url("/fonts/Azonix.otf") format("opentype");
   font-display: swap;
 }
 

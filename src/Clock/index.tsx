@@ -34,7 +34,7 @@ const Clock: FunctionComponent<Props> = ({
   // State for drag-and-drop
   const [dragActive, setDragActive] = useState(false);
   // State to track cancelled font imports to prevent reopening
-  const [setCancelledFonts] = useState<Set<string>>(new Set());
+  const [cancelledFonts, setCancelledFonts] = useState<Set<string>>(new Set());
   // State for toast notifications
   const [showFontToast, setShowFontToast] = useState(false);
   const [showImageToast, setShowImageToast] = useState(false);

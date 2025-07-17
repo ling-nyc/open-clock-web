@@ -1,326 +1,293 @@
-import { FunctionComponent, useState, useEffect } from 'react';
-import { ZonedDateTime, LocalTime, LocalDate } from '@js-joda/core';
+import React, { useState, useEffect } from 'react';
+import { ZonedDateTime } from '@js-joda/core';
 
 interface TimeCustomizerProps {
-  customTime: ZonedDateTime | null;
   onTimeChange: (time: ZonedDateTime | null) => void;
-  isVisible: boolean;
-  onToggle: () => void;
+  customTime: ZonedDateTime | null;
+  isMobile?: boolean;
+  isVisible?: boolean;
+  onToggleVisibility?: () => void;
 }
 
-/**
- * Time customization menu that allows users to set a specific time for preview
- */
-const TimeCustomizer: FunctionComponent<TimeCustomizerProps> = ({
-  customTime,
-  onTimeChange,
-  isVisible,
-  onToggle,
+const TimeCustomizer: React.FC<TimeCustomizerProps> = ({ 
+  onTimeChange, 
+  customTime, 
+  isMobile = false, 
+  isVisible = true, 
+  onToggleVisibility 
 }) => {
-  const [hours, setHours] = useState(12);
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
-  const [useRealTime, setUseRealTime] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(!isMobile); // Open by default on desktop
+  const [customHour, setCustomHour] = useState(12);
+  const [customMinute, setCustomMinute] = useState(0);
+  const [customSecond, setCustomSecond] = useState(0);
+  const [isCustomTime, setIsCustomTime] = useState(false); // Default to live time
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  // Check if device is mobile
+  // Auto-open on desktop, closed on mobile
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+    setIsOpen(!isMobile);
+  }, [isMobile]);
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const handleToggle = () => setIsOpen(prev => !prev);
 
-  // Update local state when customTime changes
-  useEffect(() => {
-    if (customTime) {
-      setHours(customTime.hour());
-      setMinutes(customTime.minute());
-      setSeconds(customTime.second());
-      setUseRealTime(false);
-    } else {
-      setUseRealTime(true);
-      setIsPlaying(false);
-    }
-  }, [customTime]);
+  const handleUseRealTime = () => {
+    setIsCustomTime(false);
+    onTimeChange(null);
+  };
 
-  // Handle animated time updates when playing
-  useEffect(() => {
-    if (!isPlaying || useRealTime) return;
+  const handleUseCustomTime = () => {
+    setIsCustomTime(true);
+    setIsAnimating(false);
+    updateCustomTime();
+  };
 
+  const handleStartTime = () => {
+    setIsCustomTime(true);
+    setIsAnimating(true);
+    // Start with current custom time but let it animate
+    const baseTime = ZonedDateTime.now()
+      .withHour(customHour)
+      .withMinute(customMinute)
+      .withSecond(customSecond)
+      .withNano(0);
+    
+    let currentTime = baseTime;
     const interval = setInterval(() => {
-      const now = ZonedDateTime.now();
-      const customDate = LocalDate.of(now.year(), now.month(), now.dayOfMonth());
-      let newSeconds = seconds + 1;
-      let newMinutes = minutes;
-      let newHours = hours;
-
-      if (newSeconds >= 60) {
-        newSeconds = 0;
-        newMinutes += 1;
-        if (newMinutes >= 60) {
-          newMinutes = 0;
-          newHours += 1;
-          if (newHours >= 24) {
-            newHours = 0;
-          }
-        }
-      }
-
-      setSeconds(newSeconds);
-      setMinutes(newMinutes);
-      setHours(newHours);
-
-      const customLocalTime = LocalTime.of(newHours, newMinutes, newSeconds);
-      const newTime = ZonedDateTime.of(customDate, customLocalTime, now.zone());
-      onTimeChange(newTime);
+      currentTime = currentTime.plusSeconds(1);
+      onTimeChange(currentTime);
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, [isPlaying, useRealTime, hours, minutes, seconds, onTimeChange]);
+    // Store interval ID to clear it later
+    (window as any).timeAnimationInterval = interval;
+  };
 
-  const handleTimeChange = () => {
-    if (useRealTime) {
-      onTimeChange(null);
-      setIsPlaying(false);
-    } else {
-      const now = ZonedDateTime.now();
-      const customDate = LocalDate.of(now.year(), now.month(), now.dayOfMonth());
-      const customLocalTime = LocalTime.of(hours, minutes, seconds);
-      const newTime = ZonedDateTime.of(customDate, customLocalTime, now.zone());
-      onTimeChange(newTime);
+  const handleStopAnimation = () => {
+    setIsAnimating(false);
+    if ((window as any).timeAnimationInterval) {
+      clearInterval((window as any).timeAnimationInterval);
+      (window as any).timeAnimationInterval = null;
     }
   };
 
-  useEffect(() => {
-    handleTimeChange();
-  }, [hours, minutes, seconds, useRealTime]);
-
-  const handlePresetTime = (h: number, m: number = 0, s: number = 0) => {
-    setHours(h);
-    setMinutes(m);
-    setSeconds(s);
-    setUseRealTime(false);
-    setIsPlaying(false);
+  const updateCustomTime = () => {
+    handleStopAnimation(); // Stop any existing animation
+    const now = ZonedDateTime.now();
+    const customTime = now
+      .withHour(customHour)
+      .withMinute(customMinute)
+      .withSecond(customSecond)
+      .withNano(0);
+    onTimeChange(customTime);
   };
 
-  const handlePlayPause = () => {
-    if (useRealTime) return;
-    setIsPlaying(!isPlaying);
+  const handleTimeChange = (type: 'hour' | 'minute' | 'second', value: number) => {
+    if (type === 'hour') {
+      setCustomHour(value);
+    } else if (type === 'minute') {
+      setCustomMinute(value);
+    } else {
+      setCustomSecond(value);
+    }
+    
+    if (isCustomTime) {
+      const now = ZonedDateTime.now();
+      const customTime = now
+        .withHour(type === 'hour' ? value : customHour)
+        .withMinute(type === 'minute' ? value : customMinute)
+        .withSecond(type === 'second' ? value : customSecond)
+        .withNano(0);
+      onTimeChange(customTime);
+    }
   };
 
-  const handleModeChange = (realTime: boolean) => {
-    setUseRealTime(realTime);
-    setIsPlaying(false);
+  // Convert time to total seconds for slider
+  const timeToSeconds = (h: number, m: number, s: number) => h * 3600 + m * 60 + s;
+  const secondsToTime = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return { hours, minutes, seconds };
   };
 
-  // Mobile version with toggle button
-  if (isMobile) {
-    return (
-      <>
-        {/* Toggle button */}
-        <button
-          className="time-customizer-toggle"
-          onClick={onToggle}
-          title="Customize preview time"
-        >
-          🕐
-        </button>
+  const handleTimeInputChange = (value: string) => {
+    // Parse HH:MM:SS format
+    const timeRegex = /^(\d{1,2}):(\d{1,2}):(\d{1,2})$/;
+    const match = value.match(timeRegex);
+    
+    if (match) {
+      const [, h, m, s] = match;
+      const hour = Math.max(0, Math.min(23, parseInt(h)));
+      const minute = Math.max(0, Math.min(59, parseInt(m)));
+      const second = Math.max(0, Math.min(59, parseInt(s)));
+      
+      setCustomHour(hour);
+      setCustomMinute(minute);
+      setCustomSecond(second);
+      
+      if (isCustomTime) {
+        const now = ZonedDateTime.now();
+        const customTime = now
+          .withHour(hour)
+          .withMinute(minute)
+          .withSecond(second)
+          .withNano(0);
+        onTimeChange(customTime);
+      }
+    }
+  };
 
-        {/* Menu panel */}
-        {isVisible && (
-          <div className="time-customizer-panel time-customizer-mobile">
-            <h3>Preview Time</h3>
+  const handleSliderChange = (totalSeconds: number) => {
+    const { hours, minutes, seconds } = secondsToTime(totalSeconds);
+    setCustomHour(hours);
+    setCustomMinute(minutes);
+    setCustomSecond(seconds);
+    
+    if (isCustomTime) {
+      const now = ZonedDateTime.now();
+      const customTime = now
+        .withHour(hours)
+        .withMinute(minutes)
+        .withSecond(seconds)
+        .withNano(0);
+      onTimeChange(customTime);
+    }
+  };
 
-            <div className="time-mode-selector">
-              <label>
-                <input
-                  type="radio"
-                  checked={useRealTime}
-                  onChange={() => handleModeChange(true)}
-                />
-                Real Time
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  checked={!useRealTime}
-                  onChange={() => handleModeChange(false)}
-                />
-                Custom Time
-              </label>
-            </div>
+  const presetTimes = [
+    { label: '12:00:00', hour: 12, minute: 0, second: 0 },
+    { label: '3:15:30', hour: 15, minute: 15, second: 30 },
+    { label: '6:30:45', hour: 18, minute: 30, second: 45 },
+    { label: '9:45:15', hour: 21, minute: 45, second: 15 },
+    { label: '10:10:10', hour: 10, minute: 10, second: 10 },
+  ];
 
-            {!useRealTime && (
-              <>
-                <div className="time-controls">
-                  <div className="time-inputs">
-                    <div className="time-input-group">
-                      <label>Hours:</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="23"
-                        value={hours}
-                        onChange={(e) => setHours(parseInt(e.target.value) || 0)}
-                        disabled={isPlaying}
-                      />
-                    </div>
-                    <div className="time-input-group">
-                      <label>Minutes:</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="59"
-                        value={minutes}
-                        onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
-                        disabled={isPlaying}
-                      />
-                    </div>
-                    <div className="time-input-group">
-                      <label>Seconds:</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="59"
-                        value={seconds}
-                        onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
-                        disabled={isPlaying}
-                      />
-                    </div>
-                  </div>
+  const handlePresetClick = (hour: number, minute: number, second: number) => {
+    setCustomHour(hour);
+    setCustomMinute(minute);
+    setCustomSecond(second);
+    setIsCustomTime(true);
+    
+    const now = ZonedDateTime.now();
+    const customTime = now
+      .withHour(hour)
+      .withMinute(minute)
+      .withSecond(second)
+      .withNano(0);
+    onTimeChange(customTime);
+  };
 
-                  <div className="play-control">
-                    <button
-                      className={`play-button ${isPlaying ? 'playing' : ''}`}
-                      onClick={handlePlayPause}
-                      title={isPlaying ? 'Pause time' : 'Start time animation'}
-                    >
-                      {isPlaying ? '⏸️' : '▶️'}
-                    </button>
-                    <span className="play-label">
-                      {isPlaying ? 'Playing' : 'Paused'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="time-presets">
-                  <h4>Quick Presets:</h4>
-                  <div className="preset-buttons">
-                    <button onClick={() => handlePresetTime(12, 0, 0)}>12:00</button>
-                    <button onClick={() => handlePresetTime(3, 0, 0)}>3:00</button>
-                    <button onClick={() => handlePresetTime(6, 0, 0)}>6:00</button>
-                    <button onClick={() => handlePresetTime(9, 0, 0)}>9:00</button>
-                    <button onClick={() => handlePresetTime(10, 10, 0)}>10:10</button>
-                    <button onClick={() => handlePresetTime(2, 20, 0)}>2:20</button>
-                    <button onClick={() => handlePresetTime(4, 40, 0)}>4:40</button>
-                    <button onClick={() => handlePresetTime(8, 20, 0)}>8:20</button>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-      </>
-    );
+  // Don't render on mobile if not visible
+  if (isMobile && !isVisible) {
+    return null;
   }
 
-  // Desktop version - always visible with all controls shown
   return (
-    <div className="time-customizer-panel time-customizer-desktop">
-      <h3>Preview Time</h3>
-
-      <div className="time-mode-selector">
-        <label>
-          <input
-            type="radio"
-            checked={useRealTime}
-            onChange={() => handleModeChange(true)}
-          />
-          Real Time
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={!useRealTime}
-            onChange={() => handleModeChange(false)}
-          />
-          Custom Time
-        </label>
-      </div>
-
-      {/* Always show time controls */}
-      <div className="time-controls">
-        <div className="time-inputs">
-          <div className="time-input-group">
-            <label>Hours:</label>
-            <input
-              type="number"
-              min="0"
-              max="23"
-              value={hours}
-              onChange={(e) => setHours(parseInt(e.target.value) || 0)}
-              disabled={isPlaying || useRealTime}
-            />
-          </div>
-          <div className="time-input-group">
-            <label>Minutes:</label>
-            <input
-              type="number"
-              min="0"
-              max="59"
-              value={minutes}
-              onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
-              disabled={isPlaying || useRealTime}
-            />
-          </div>
-          <div className="time-input-group">
-            <label>Seconds:</label>
-            <input
-              type="number"
-              min="0"
-              max="59"
-              value={seconds}
-              onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
-              disabled={isPlaying || useRealTime}
-            />
-          </div>
-        </div>
-
-        {/* Always show play control */}
-        <div className="play-control">
-          <button
-            className={`play-button ${isPlaying ? 'playing' : ''}`}
-            onClick={handlePlayPause}
-            disabled={useRealTime}
-            title={isPlaying ? 'Pause time' : 'Start time animation'}
-          >
-            {isPlaying ? '⏸️' : '▶️'}
-          </button>
-          <span className="play-label">
-            {isPlaying ? 'Playing' : 'Paused'}
+    <div className={`time-customizer ${isMobile ? 'mobile' : 'desktop'}`}>
+      {/* Desktop: always show content, Mobile: show toggle */}
+      {isMobile ? (
+        <button
+          className="time-customizer-toggle"
+          onClick={handleToggle}
+          aria-expanded={isOpen}
+        >
+          <span className={`time-customizer-arrow ${isOpen ? 'open' : ''}`}>
+            ▶
           </span>
+          Time: {customTime ? 
+            `${customTime.hour().toString().padStart(2, '0')}:${customTime.minute().toString().padStart(2, '0')}:${customTime.second().toString().padStart(2, '0')}` : 
+            'Live'
+          }
+        </button>
+      ) : (
+        <div className="time-customizer-header">
+          <h3>Time Controls</h3>
         </div>
-      </div>
+      )}
+      
+      {/* Content - always visible on desktop, toggleable on mobile */}
+      {(isOpen || !isMobile) && (
+        <div className="time-customizer-content">
+          <div className="time-mode-controls">
+            <button
+              className={`time-mode-btn ${!isCustomTime ? 'active' : ''}`}
+              onClick={handleUseRealTime}
+            >
+              Live Time
+            </button>
+            <button
+              className={`time-mode-btn ${isCustomTime && !isAnimating ? 'active' : ''}`}
+              onClick={handleUseCustomTime}
+            >
+              Custom Time
+            </button>
+          </div>
+          
+          {/* Always show custom time controls */}
+          <div className="time-input-section">
+            <label className="time-input-label">Set Time:</label>
+            
+            {/* Single Time Input Field */}
+            <div className="single-time-input">
+              <input
+                type="text"
+                placeholder="HH:MM:SS"
+                value={`${customHour.toString().padStart(2, '0')}:${customMinute.toString().padStart(2, '0')}:${customSecond.toString().padStart(2, '0')}`}
+                onChange={(e) => handleTimeInputChange(e.target.value)}
+                className="time-text-input"
+                pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+                disabled={!isCustomTime}
+              />
+            </div>
 
-      {/* Always show presets */}
-      <div className="time-presets">
-        <h4>Quick Presets:</h4>
-        <div className="preset-buttons">
-          <button onClick={() => handlePresetTime(12, 0, 0)} disabled={useRealTime}>12:00</button>
-          <button onClick={() => handlePresetTime(3, 0, 0)} disabled={useRealTime}>3:00</button>
-          <button onClick={() => handlePresetTime(6, 0, 0)} disabled={useRealTime}>6:00</button>
-          <button onClick={() => handlePresetTime(9, 0, 0)} disabled={useRealTime}>9:00</button>
-          <button onClick={() => handlePresetTime(10, 10, 0)} disabled={useRealTime}>10:10</button>
-          <button onClick={() => handlePresetTime(2, 20, 0)} disabled={useRealTime}>2:20</button>
-          <button onClick={() => handlePresetTime(4, 40, 0)} disabled={useRealTime}>4:40</button>
-          <button onClick={() => handlePresetTime(8, 20, 0)} disabled={useRealTime}>8:20</button>
+            {/* Time Slider */}
+            <div className="time-slider-section">
+              <label className="slider-label">Or drag to set time:</label>
+              <input
+                type="range"
+                min="0"
+                max="86399"
+                value={timeToSeconds(customHour, customMinute, customSecond)}
+                onChange={(e) => handleSliderChange(parseInt(e.target.value))}
+                className="time-slider"
+                disabled={!isCustomTime}
+              />
+              <div className="slider-time-display">
+                {`${customHour.toString().padStart(2, '0')}:${customMinute.toString().padStart(2, '0')}:${customSecond.toString().padStart(2, '0')}`}
+              </div>
+            </div>
+          </div>
+
+          {/* Start/Stop Animation Button */}
+          <div className="animation-controls">
+            <button
+              className={`animation-btn ${isAnimating ? 'active' : ''}`}
+              onClick={isAnimating ? handleStopAnimation : handleStartTime}
+              title={isAnimating ? 'Pause time animation' : 'Start time animation from current time'}
+              disabled={!isCustomTime}
+            >
+              <span className="animation-icon">
+                {isAnimating ? '⏸️' : '▶️'}
+              </span>
+              {isAnimating ? 'Pause' : 'Start'}
+            </button>
+          </div>
+          
+          <div className="time-presets">
+            <label>Quick Presets:</label>
+            <div className="preset-buttons">
+              {presetTimes.map((preset, index) => (
+                <button
+                  key={index}
+                  className="preset-btn"
+                  onClick={() => handlePresetClick(preset.hour, preset.minute, preset.second)}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
