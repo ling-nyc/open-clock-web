@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-// Toast styles are included in the main style.css
+// Toast styles are included in the main style sheet
 
 interface ToastProps {
   type: 'warning' | 'error' | 'info' | 'success';

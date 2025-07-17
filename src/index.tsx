@@ -4,7 +4,7 @@ import App from './components/App';
 import './fonts';
 
 // Import clean CSS
-import './components/clean-style.css';
+import './components/style.css';
 
 const container = document.getElementById('app');
 if (container) {
