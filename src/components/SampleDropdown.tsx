@@ -60,32 +60,30 @@ const SampleDropdown: React.FC<SampleDropdownProps> = ({ onSampleLoad }) => {
       >
         Sample Files
       </button>
-      {showSamples && (
-        <div
-          className="sample-dropdown__menu"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-          }}
-          onMouseLeave={() => setShowSamples(false)}
-        >
-          {sampleFiles.length === 0 && (
-            <div className="sample-dropdown__empty">
-              No samples
-            </div>
-          )}
-          {sampleFiles.map((sample) => (
-            <button
-              key={sample.filename}
-              type="button"
-              className="sample-dropdown__item"
-              onClick={(event) => handleSampleClick(sample.filename, event)}
-            >
-              {sample.name}
-            </button>
-          ))}
-        </div>
-      )}
+      <div
+        className={`sample-dropdown__menu ${showSamples ? 'sample-dropdown__menu--visible' : 'sample-dropdown__menu--hidden'}`}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+        onMouseLeave={() => setShowSamples(false)}
+      >
+        {sampleFiles.length === 0 && (
+          <div className="sample-dropdown__empty">
+            No samples
+          </div>
+        )}
+        {sampleFiles.map((sample) => (
+          <button
+            key={sample.filename}
+            type="button"
+            className="sample-dropdown__item"
+            onClick={(event) => handleSampleClick(sample.filename, event)}
+          >
+            {sample.name}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
