@@ -32,8 +32,6 @@ const Clock: FunctionComponent<Props> = ({
   // State for missing font popup
   const [importFont, setImportFont] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
-  // State for drag-and-drop
-  const [dragActive, setDragActive] = useState(false);
   // State to track cancelled font imports to prevent reopening
   const [, setCancelledFonts] = useState<Set<string>>(new Set());
   // State for managing toast notifications
@@ -64,6 +62,11 @@ const Clock: FunctionComponent<Props> = ({
   const imageWarnings = warnings
     .filter((w) => w.type === 'image')
     .map((w) => w.name);
+
+  // Function to handle font upload from toast (opens modal)
+  const handleFontUpload = (fontName: string) => {
+    setImportFont(fontName);
+  };
 
   // Manage toasts when warnings appear
   useEffect(() => {
@@ -116,11 +119,6 @@ const Clock: FunctionComponent<Props> = ({
   const handleMissingFont = (name: string) => {
     // Don't show popup automatically anymore - just add warning
     addWarning({ type: 'font', name });
-  };
-
-  // Function to handle font upload from toast (opens modal)
-  const handleFontUpload = (fontName: string) => {
-    setImportFont(fontName);
   };
 
   // Function to handle actual font file upload in modal
