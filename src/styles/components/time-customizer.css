@@ -1,92 +1,247 @@
 /* Time Customizer Component Styles */
-.time-customizer {
-  --primary-color: #2563eb;
-  --primary-hover: #1e40af;
-  --success-color: #10b981;
-  --success-hover: #059669;
-  --background: #fff;
-  --surface: #f8fafc;
-  --border: #e2e8f0;
-  --text: #1e293b;
-  --text-secondary: #64748b;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --radius: 12px;
-  --radius-sm: 8px;
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 0.75rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-}
 
 .time-customizer.desktop {
-  background: var(--background);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: var(--spacing-lg);
-  margin-right: var(--spacing-lg);
-  min-width: 280px;
-  max-width: 320px;
-  height: fit-content;
-  border: 1px solid var(--border);
-}
-
-.time-customizer.mobile {
-  position: fixed;
-  top: 60px;
-  left: var(--spacing-md);
-  right: var(--spacing-md);
-  background: var(--background);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  z-index: 1000;
-  border: 1px solid var(--border);
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-/* Header */
-.time-customizer-header {
-  margin-bottom: var(--spacing-lg);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+  max-width: 350px;
+  align-self: flex-start;
 }
 
 .time-customizer-header h3 {
-  margin: 0;
-  color: var(--text);
-  font-size: 1.125rem;
+  margin: 0 0 16px 0;
+  font-size: 1.1em;
   font-weight: 600;
+  color: #374151;
 }
 
-/* Mobile Toggle Button - Enhanced */
+.time-mode-controls {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.time-mode-btn {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #f9fafb;
+  color: #374151;
+  text-align: center;
+}
+
+.time-mode-btn:hover:not(.active) {
+  border-color: #9ca3af;
+  background: #f3f4f6;
+}
+
+.time-mode-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+.time-input-label {
+  display: block;
+  font-size: 1em;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #374151;
+  text-align: center;
+}
+
+.time-text-input {
+  width: 100%;
+  height: 48px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: #374151;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.time-text-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.time-text-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slider-label {
+  display: block;
+  font-size: 0.9em;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: #6b7280;
+}
+
+.time-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #e5e7eb;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.time-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #2563eb;
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.time-slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slider-time-display {
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  letter-spacing: 1px;
+}
+
+.animation-controls {
+  margin: 24px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.animation-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.animation-btn:hover:not(:disabled) {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.animation-btn.active {
+  border-color: #dc2626;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.animation-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.time-presets {
+  margin-top: 20px;
+}
+
+.time-presets label {
+  display: block;
+  font-size: 0.9em;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #374151;
+}
+
+.preset-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.preset-btn {
+  background: #f8fafc;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.preset-btn:hover {
+  background: #e2e8f0;
+  border-color: #9ca3af;
+}
+
+/* Mobile TimeCustomizer styles */
 .time-customizer-toggle {
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: var(--spacing-md);
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: 8px;
   font-size: 0.875rem;
-  color: var(--text);
-  box-shadow: var(--shadow);
+  color: #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
   width: 100%;
   text-align: left;
+  position: relative;
 }
 
 .time-customizer-toggle:hover {
-  background: var(--surface);
-  border-color: var(--primary-color);
+  background: #f8fafc;
+  border-color: #2563eb;
 }
 
 .time-status-indicator {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 8px;
   font-weight: 500;
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: #64748b;
 }
 
 .status-dot {
@@ -97,11 +252,11 @@
 }
 
 .status-dot.live {
-  background: var(--success-color);
+  background: #10b981;
 }
 
 .status-dot.custom {
-  background: var(--primary-color);
+  background: #2563eb;
 }
 
 .status-dot.animating {
@@ -115,110 +270,58 @@
 }
 
 .current-time-display {
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text);
+  color: #1e293b;
   letter-spacing: 0.5px;
 }
 
 .time-customizer-arrow {
   position: absolute;
-  right: var(--spacing-md);
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
   transition: transform 0.2s ease;
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: #64748b;
 }
 
 .time-customizer-arrow.open {
   transform: translateY(-50%) rotate(180deg);
 }
 
-/* Content Container */
 .time-customizer-content {
-  padding: var(--spacing-md);
+  padding: 16px;
 }
 
 .time-customizer.mobile .time-customizer-content {
-  padding: var(--spacing-lg);
+  padding: 24px;
 }
 
-/* Mode Controls - Enhanced */
-.time-mode-controls {
-  display: flex;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-lg);
-  background: var(--surface);
-  padding: 4px;
-  border-radius: var(--radius-sm);
-}
-
-.time-mode-btn {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: var(--spacing-sm) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-}
-
-.time-mode-btn.active {
-  background: var(--background);
-  color: var(--primary-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.time-mode-btn:hover:not(.active) {
-  color: var(--text);
-}
-
-.mode-icon {
-  font-size: 1rem;
-}
-
-/* Time Input Section */
 .time-input-section {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 24px;
 }
 
-.time-input-label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text);
-}
-
-/* Mobile Time Inputs - New */
 .mobile-time-inputs {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .time-input-group {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 8px;
 }
 
 .time-input-group .time-input-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0;
@@ -227,14 +330,14 @@
 .mobile-time-input {
   width: 60px;
   height: 50px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
   font-size: 1.25rem;
   font-weight: 600;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   text-align: center;
-  background: var(--surface);
-  color: var(--text);
+  background: #f8fafc;
+  color: #1e293b;
   transition: all 0.2s ease;
   -webkit-appearance: none;
   -moz-appearance: textfield;
@@ -249,201 +352,73 @@
 .mobile-time-input:focus,
 .mobile-time-input.active {
   outline: none;
-  border-color: var(--primary-color);
-  background: var(--background);
+  border-color: #2563eb;
+  background: #fff;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .mobile-time-input:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: var(--border);
+  background: #e2e8f0;
 }
 
 .time-separator {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-secondary);
-  margin: 0 var(--spacing-xs);
+  color: #64748b;
+  margin: 0 8px;
   align-self: flex-end;
   margin-bottom: 8px;
 }
 
-/* Desktop Single Time Input */
 .single-time-input {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 16px;
 }
 
-.time-text-input {
-  width: 100%;
-  padding: var(--spacing-sm);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 1rem;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-  text-align: center;
-  letter-spacing: 0.5px;
-  background: var(--surface);
-  color: var(--text);
-  transition: all 0.2s ease;
-}
-
-.time-text-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-  background: var(--background);
-}
-
-.time-text-input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Time Slider */
 .time-slider-section {
-  margin-top: var(--spacing-md);
-}
-
-.slider-label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.time-slider {
-  width: 100%;
-  height: 6px;
-  background: var(--border);
-  border-radius: 3px;
-  outline: none;
-  -webkit-appearance: none;
-  margin-bottom: var(--spacing-xs);
-}
-
-.time-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  cursor: pointer;
-  border: 2px solid var(--background);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.time-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  cursor: pointer;
-  border: 2px solid var(--background);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.time-slider:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Animation Controls */
-.animation-controls {
-  margin: var(--spacing-lg) 0;
-  display: flex;
-  justify-content: center;
-}
-
-.animation-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 120px;
-}
-
-.animation-btn:hover:not(:disabled) {
-  border-color: var(--primary-color);
-  background: var(--background);
-  color: var(--primary-color);
-}
-
-.animation-btn.active {
-  border-color: #dc2626;
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.animation-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  margin-top: 16px;
 }
 
 .animation-icon {
   font-size: 1rem;
 }
 
-/* Time Presets */
-.time-presets {
-  margin-top: var(--spacing-lg);
+.mode-icon {
+  font-size: 1rem;
 }
 
-.time-presets label {
-  display: block;
-  margin-bottom: var(--spacing-sm);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.preset-buttons {
-  display: grid;
+.mobile-presets {
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-xs);
+  gap: 12px;
 }
 
-.preset-buttons.mobile-presets {
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-sm);
+.time-customizer.mobile {
+  position: fixed;
+  top: 60px;
+  left: 16px;
+  right: 16px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  border: 1px solid #e2e8f0;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
-.preset-btn {
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-sm);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.preset-btn:hover {
-  background: var(--background);
-  border-color: var(--primary-color);
-  color: var(--primary-color);
-}
-
-/* Mobile-specific enhancements */
+/* Mobile responsive */
 @media (max-width: 768px) {
+  .time-customizer.desktop {
+    min-width: auto;
+    max-width: 100%;
+    width: 100%;
+  }
+
   .time-customizer.mobile {
     top: 50px;
-    left: var(--spacing-sm);
-    right: var(--spacing-sm);
+    left: 16px;
+    right: 16px;
   }
 
   .mobile-time-input {
@@ -452,24 +427,128 @@
     font-size: 1.1rem;
   }
 
-  .preset-buttons.mobile-presets {
+  .mobile-presets {
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-sm);
+    gap: 12px;
   }
 
   .preset-btn {
-    padding: var(--spacing-sm) var(--spacing-xs);
+    padding: 12px 8px;
     font-size: 0.75rem;
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .time-customizer {
-    --background: #1e293b;
-    --surface: #334155;
-    --border: #475569;
-    --text: #f1f5f9;
-    --text-secondary: #94a3b8;
-  }
+/* Dark mode styles */
+body.dark .time-customizer.desktop {
+  background: #1f2937;
+  border-color: #374151;
+  color: #f3f4f6;
+}
+
+body.dark .time-customizer-header h3 {
+  color: #e5e7eb;
+}
+
+body.dark .time-mode-btn {
+  background: #374151;
+  border-color: #4b5563;
+  color: #e5e7eb;
+}
+
+body.dark .time-mode-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+body.dark .time-text-input {
+  background: #374151;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+body.dark .time-text-input:focus {
+  border-color: #60a5fa;
+  background: #1f2937;
+}
+
+body.dark .slider-time-display {
+  background: #1e3a8a;
+  color: #60a5fa;
+}
+
+body.dark .animation-btn {
+  background: #374151;
+  border-color: #4b5563;
+  color: #e5e7eb;
+}
+
+body.dark .animation-btn:hover:not(:disabled) {
+  border-color: #60a5fa;
+  background: #1e3a8a;
+  color: #60a5fa;
+}
+
+body.dark .preset-btn {
+  background: #374151;
+  color: #e5e7eb;
+  border-color: #4b5563;
+}
+
+body.dark .preset-btn:hover {
+  background: #1f2937;
+  border-color: #6b7280;
+}
+
+body.dark .time-customizer-toggle {
+  background: #1e293b;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+body.dark .time-customizer-toggle:hover {
+  background: #334155;
+  border-color: #60a5fa;
+}
+
+body.dark .time-status-indicator {
+  color: #94a3b8;
+}
+
+body.dark .current-time-display {
+  color: #f1f5f9;
+}
+
+body.dark .time-customizer-arrow {
+  color: #94a3b8;
+}
+
+body.dark .time-input-group .time-input-label {
+  color: #94a3b8;
+}
+
+body.dark .mobile-time-input {
+  background: #334155;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+body.dark .mobile-time-input:focus,
+body.dark .mobile-time-input.active {
+  border-color: #60a5fa;
+  background: #1e293b;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+body.dark .mobile-time-input:disabled {
+  background: #475569;
+}
+
+body.dark .time-separator {
+  color: #94a3b8;
+}
+
+body.dark .time-customizer.mobile {
+  background: #1e293b;
+  border-color: #475569;
 }

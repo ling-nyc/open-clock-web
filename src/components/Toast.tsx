@@ -1,32 +1,37 @@
-import React, { useState } from 'react';
-// Toast styles are included in the main style sheet
+import React from 'react';
 
-interface ToastProps {
+export interface ToastProps {
   type: 'warning' | 'error' | 'info' | 'success';
   title: string;
   items: string[];
   onClose: () => void;
-  onUpload?: (itemName: string) => void;
+  onUpload?: (item: string) => void;
+  index?: number; // For positioning multiple toasts
 }
 
-const Toast: React.FC<ToastProps> = ({ type, title, items, onClose, onUpload }) => {
-  const [isVisible, setIsVisible] = useState(true);
-
+const Toast: React.FC<ToastProps> = ({
+  type,
+  title,
+  items,
+  onClose,
+  onUpload,
+  index = 0
+}) => {
   const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(onClose, 300); // Allow fade out animation
+    onClose();
   };
 
-  const handleUpload = (itemName: string) => {
-    if (onUpload) {
-      onUpload(itemName);
-    }
-  };
-
-  if (!isVisible) return null;
+  // Calculate vertical offset based on toast index
+  const topOffset = 20 + (index * 120); // 120px spacing between toasts
 
   return (
-    <div className={`toast toast-${type}`}>
+    <div
+      className={`toast toast-${type}`}
+      style={{
+        top: `${topOffset}px`,
+        transform: 'none' // Override any existing transforms
+      }}
+    >
       <div className="toast-header">
         <span className="toast-title">{title}</span>
         <button className="toast-close" onClick={handleClose}>
@@ -34,14 +39,14 @@ const Toast: React.FC<ToastProps> = ({ type, title, items, onClose, onUpload }) 
         </button>
       </div>
       <div className="toast-content">
-        {items.map((item, index) => (
-          <div key={index} className="toast-item">
+        {items.map((item, itemIndex) => (
+          <div key={itemIndex} className="toast-item">
             <span className="toast-item-name">{item}</span>
-            {onUpload && type === 'warning' && (
+            {/* Show upload button only for font warnings */}
+            {type === 'warning' && onUpload && (
               <button
                 className="toast-upload-btn"
-                onClick={() => handleUpload(item)}
-                title={`Upload ${item}`}
+                onClick={() => onUpload(item)}
               >
                 Upload
               </button>

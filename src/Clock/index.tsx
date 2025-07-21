@@ -7,7 +7,8 @@ import { useAssets } from './useAssets';
 import { useAssetWarnings } from './AssetWarningContext';
 import React, { useState } from 'react';
 import { addFontToCache } from '../components/FontCacheMenu';
-import Toast from '../components/Toast';
+import ToastContainer, { ToastData } from '../components/ToastContainer';
+import FontUploadModal from '../components/FontUploadModal';
 
 interface Props {
   clock: ClockWrapper;
@@ -35,9 +36,8 @@ const Clock: FunctionComponent<Props> = ({
   const [dragActive, setDragActive] = useState(false);
   // State to track cancelled font imports to prevent reopening
   const [, setCancelledFonts] = useState<Set<string>>(new Set());
-  // State for toast notifications
-  const [showFontToast, setShowFontToast] = useState(false);
-  const [showImageToast, setShowImageToast] = useState(false);
+  // State for managing toast notifications
+  const [toasts, setToasts] = useState<ToastData[]>([]);
 
   // Calculate width and other layout properties
   const width = ratio * height;
@@ -53,8 +53,7 @@ const Clock: FunctionComponent<Props> = ({
   useEffect(() => {
     clearWarnings();
     setCancelledFonts(new Set());
-    setShowFontToast(false);
-    setShowImageToast(false);
+    setToasts([]); // Clear all toasts when clock changes
   }, [clock, clearWarnings]);
 
   // Group warnings by type for display
@@ -66,18 +65,47 @@ const Clock: FunctionComponent<Props> = ({
     .filter((w) => w.type === 'image')
     .map((w) => w.name);
 
-  // Show toasts when warnings appear
+  // Manage toasts when warnings appear
   useEffect(() => {
-    if (fontWarnings.length > 0 && !showFontToast) {
-      setShowFontToast(true);
-    }
-  }, [fontWarnings.length, showFontToast]);
+    const newToasts: ToastData[] = [];
 
-  useEffect(() => {
-    if (imageWarnings.length > 0 && !showImageToast) {
-      setShowImageToast(true);
+    // Add font warning toast if there are font warnings
+    if (fontWarnings.length > 0) {
+      const fontToastExists = toasts.some(t => t.id === 'font-warnings');
+      if (!fontToastExists) {
+        newToasts.push({
+          id: 'font-warnings',
+          type: 'warning',
+          title: `Missing ${fontWarnings.length === 1 ? 'Font' : 'Fonts'}`,
+          items: fontWarnings,
+          onClose: () => {
+            setToasts(prev => prev.filter(t => t.id !== 'font-warnings'));
+          },
+          onUpload: handleFontUpload
+        });
+      }
     }
-  }, [imageWarnings.length, showImageToast]);
+
+    // Add image warning toast if there are image warnings
+    if (imageWarnings.length > 0) {
+      const imageToastExists = toasts.some(t => t.id === 'image-warnings');
+      if (!imageToastExists) {
+        newToasts.push({
+          id: 'image-warnings',
+          type: 'error',
+          title: `Missing ${imageWarnings.length === 1 ? 'Image' : 'Images'}`,
+          items: imageWarnings,
+          onClose: () => {
+            setToasts(prev => prev.filter(t => t.id !== 'image-warnings'));
+          }
+        });
+      }
+    }
+
+    if (newToasts.length > 0) {
+      setToasts(prev => [...prev, ...newToasts]);
+    }
+  }, [fontWarnings.length, imageWarnings.length]);
 
   // Function to add a missing image warning
   const handleMissingImage = (name: string) => {
@@ -90,13 +118,43 @@ const Clock: FunctionComponent<Props> = ({
     addWarning({ type: 'font', name });
   };
 
-  // Function to handle font upload from toast
+  // Function to handle font upload from toast (opens modal)
   const handleFontUpload = (fontName: string) => {
     setImportFont(fontName);
   };
 
-  // Function to handle cancel button click
-  const handleCancel = () => {
+  // Function to handle actual font file upload in modal
+  const handleFontFileUpload = async (file: File) => {
+    setImportError(null);
+
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (!['ttf', 'otf', 'woff', 'woff2'].includes(ext || '')) {
+      setImportError('Only .ttf, .otf, .woff, and .woff2 files are supported.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const result = ev.target?.result;
+      if (typeof result === 'string') {
+        const base64 = result.split(',')[1];
+        addFontToCache({
+          name: importFont!,
+          type: ext === 'otf' ? 'opentype' : ext === 'woff' ? 'woff' : ext === 'woff2' ? 'woff2' : 'truetype',
+          data: base64,
+        });
+        window.dispatchEvent(new Event('fontcachechange'));
+        setImportFont(null);
+        setImportError(null);
+        setTimeout(() => window.location.reload(), 100);
+      }
+    };
+    reader.onerror = () => setImportError('Failed to read font file.');
+    reader.readAsDataURL(file);
+  };
+
+  // Function to close font upload modal
+  const handleCloseFontModal = () => {
     if (importFont) {
       setCancelledFonts((prev) => new Set(prev).add(importFont));
     }
@@ -108,119 +166,17 @@ const Clock: FunctionComponent<Props> = ({
 
   return (
     <div>
-      {/* Missing font import popup */}
-      {importFont && (
-        <div className="font-import-popup-overlay">
-          <div
-            className={`font-import-popup${dragActive ? ' drag-active' : ''}`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragActive(true);
-            }}
-            onDragLeave={(e) => {
-              e.preventDefault();
-              setDragActive(false);
-            }}
-            onDrop={(e) => {
-              e.preventDefault();
-              setDragActive(false);
-              const file = e.dataTransfer.files?.[0];
-              if (!file) return;
-              const ext = file.name.split('.').pop()?.toLowerCase();
-              if (ext !== 'ttf') {
-                setImportError('Only .ttf files are supported.');
-                return;
-              }
-              const reader = new FileReader();
-              reader.onload = (ev) => {
-                const result = ev.target?.result;
-                if (typeof result === 'string') {
-                  const base64 = result.split(',')[1];
-                  addFontToCache({
-                    name: importFont,
-                    type: 'truetype',
-                    data: base64,
-                  });
-                  window.dispatchEvent(new Event('fontcachechange'));
-                  setImportFont(null);
-                  setTimeout(() => window.location.reload(), 100);
-                }
-              };
-              reader.onerror = () =>
-                setImportError('Failed to read font file.');
-              reader.readAsDataURL(file);
-            }}
-          >
-            <h3>Missing Font: {importFont}</h3>
-            <p>
-              This clock uses a font that is not installed. Please import a .ttf
-              file for <b>{importFont}</b> to display it correctly.
-              <br />
-              <span style={{ fontSize: '0.97em', color: '#888' }}>
-                You can also drag and drop a .ttf file here.
-              </span>
-            </p>
-            <input
-              type="file"
-              accept=".ttf,font/ttf,application/x-font-ttf"
-              onChange={async (e) => {
-                setImportError(null);
-                const file = e.target.files?.[0];
-                if (!file) return;
-                const ext = file.name.split('.').pop()?.toLowerCase();
-                if (ext !== 'ttf') {
-                  setImportError('Only .ttf files are supported.');
-                  return;
-                }
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                  const result = ev.target?.result;
-                  if (typeof result === 'string') {
-                    // base64 encode
-                    const base64 = result.split(',')[1];
-                    addFontToCache({
-                      name: importFont,
-                      type: 'truetype',
-                      data: base64,
-                    });
-                    window.dispatchEvent(new Event('fontcachechange'));
-                    setImportFont(null);
-                    setTimeout(() => window.location.reload(), 100); // reload to refresh font usage
-                  }
-                };
-                reader.onerror = () =>
-                  setImportError('Failed to read font file.');
-                reader.readAsDataURL(file);
-              }}
-            />
-            {importError && (
-              <div className="font-import-error">{importError}</div>
-            )}
-            <button type="button" onClick={handleCancel}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Font Upload Modal - replaces the old inline popup */}
+      <FontUploadModal
+        fontName={importFont || ''}
+        isOpen={!!importFont}
+        onClose={handleCloseFontModal}
+        onUpload={handleFontFileUpload}
+        error={importError}
+      />
 
-      {/* Toast notifications */}
-      {showFontToast && fontWarnings.length > 0 && (
-        <Toast
-          type="warning"
-          title={`Missing ${fontWarnings.length === 1 ? 'Font' : 'Fonts'}`}
-          items={fontWarnings}
-          onClose={() => setShowFontToast(false)}
-          onUpload={handleFontUpload} // Use the correct prop name
-        />
-      )}
-      {showImageToast && imageWarnings.length > 0 && (
-        <Toast
-          type="error"
-          title={`Missing ${imageWarnings.length === 1 ? 'Image' : 'Images'}`}
-          items={imageWarnings}
-          onClose={() => setShowImageToast(false)}
-        />
-      )}
+      {/* Toast Container - manages multiple toasts and prevents stacking */}
+      <ToastContainer toasts={toasts} />
 
       <MaybeWrapper render={wrapper} style={style}>
         <svg

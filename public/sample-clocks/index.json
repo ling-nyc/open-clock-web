@@ -1,1 +1,14 @@
-["Examples.ocs", "knightsteverooks2.ocs", "SimpleDigital.ocs"]
+[
+  {
+    "filename": "SimpleDigital.ocs",
+    "name": "Simple Digital Clock"
+  },
+  {
+    "filename": "knightsteverooks2.ocs", 
+    "name": "Knight Steve Rooks"
+  },
+  {
+    "filename": "EmbeddedImages.ocs",
+    "name": "Clock with Images"
+  }
+]

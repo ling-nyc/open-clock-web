@@ -158,7 +158,7 @@ const TextLayer: FunctionComponent<LayerProps> = ({
     fontFamily:
       !isLoaded && errorMessage ? 'sans-serif' : fontFamily || 'sans-serif',
     fontSize: `${Number(layer.scale) * 46.5}px`,
-    textAnchor: textAnchors[layer.textOptions.justification],
+    textAnchor: textAnchors[layer.textOptions.justification] || textAnchors[Justification.Centered],
     fill: layer.fillColor,
   };
 

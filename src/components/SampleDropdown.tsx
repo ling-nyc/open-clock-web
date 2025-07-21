@@ -1,17 +1,34 @@
 import { useEffect, useState } from 'react';
 
+interface SampleFile {
+  filename: string;
+  name: string;
+}
+
 interface SampleDropdownProps {
   onSampleLoad: (json: string) => void;
 }
 
 const SampleDropdown: React.FC<SampleDropdownProps> = ({ onSampleLoad }) => {
-  const [sampleFiles, setSampleFiles] = useState<string[]>([]);
+  const [sampleFiles, setSampleFiles] = useState<SampleFile[]>([]);
   const [showSamples, setShowSamples] = useState(false);
 
   useEffect(() => {
     fetch('/sample-clocks/index.json')
       .then((res) => (res.ok ? res.json() : []))
-      .then((list) => setSampleFiles(Array.isArray(list) ? list : []))
+      .then((list) => {
+        // Handle both old format (string[]) and new format (SampleFile[])
+        if (Array.isArray(list)) {
+          const samples = list.map(item =>
+            typeof item === 'string'
+              ? { filename: item, name: item.replace(/\.ocs$/, '') }
+              : item
+          );
+          setSampleFiles(samples);
+        } else {
+          setSampleFiles([]);
+        }
+      })
       .catch(() => setSampleFiles([]));
   }, []);
 
@@ -31,52 +48,21 @@ const SampleDropdown: React.FC<SampleDropdownProps> = ({ onSampleLoad }) => {
     }
   };
 
+
+
   return (
-    <div
-      style={{
-        width: '100%',
-        marginTop: '0.5em',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'relative',
-      }}
-    >
+    <div className="sample-dropdown">
       <button
         type="button"
         aria-label="Show sample clocks"
-        style={{
-          background: '#2563eb',
-          color: '#fff',
-          padding: '0.4em 1.2em',
-          borderRadius: 8,
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: '1em',
-          marginBottom: 0,
-          marginTop: 0,
-          width: 'auto',
-          zIndex: 2,
-        }}
+        className="sample-dropdown__button"
         onClick={handleToggle}
       >
         Sample Files
       </button>
       {showSamples && (
         <div
-          style={{
-            position: 'absolute',
-            top: '110%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: 8,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            zIndex: 10,
-            minWidth: 180,
-            marginTop: 2,
-          }}
+          className="sample-dropdown__menu"
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -84,28 +70,18 @@ const SampleDropdown: React.FC<SampleDropdownProps> = ({ onSampleLoad }) => {
           onMouseLeave={() => setShowSamples(false)}
         >
           {sampleFiles.length === 0 && (
-            <div style={{ padding: '0.5em 1em', color: '#888' }}>
+            <div className="sample-dropdown__empty">
               No samples
             </div>
           )}
-          {sampleFiles.map((f) => (
+          {sampleFiles.map((sample) => (
             <button
-              key={f}
+              key={sample.filename}
               type="button"
-              style={{
-                display: 'block',
-                width: '100%',
-                textAlign: 'left',
-                background: 'none',
-                border: 'none',
-                padding: '0.5em 1em',
-                cursor: 'pointer',
-                fontSize: '1em',
-                color: '#222',
-              }}
-              onClick={(event) => handleSampleClick(f, event)}
+              className="sample-dropdown__item"
+              onClick={(event) => handleSampleClick(sample.filename, event)}
             >
-              {f.replace(/\.ocs$/, '')}
+              {sample.name}
             </button>
           ))}
         </div>

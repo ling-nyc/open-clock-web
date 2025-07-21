@@ -1,9 +1,9 @@
-/* Dark Mode Toggle Component Styles */
+/* Mobile Time Toggle Component Styles */
 
-.dark-mode-toggle {
+.mobile-time-toggle {
   position: fixed;
   top: 1.5em;
-  right: 2em;
+  left: 2em;
   background: none;
   border: 2px solid #222;
   outline: none;
@@ -12,25 +12,25 @@
   padding: 0.3em;
   border-radius: 10px;
   transition: background 0.2s, border-color 0.2s;
-  color: #fbbf24;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   width: 44px;
   height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.2em;
 }
 
-.dark-mode-toggle:hover {
+.mobile-time-toggle:hover {
   background: #f1f5f9;
 }
-
-/* Dark mode styles */
-body.dark .dark-mode-toggle {
+/* D
+ark mode styles */
+body.dark .mobile-time-toggle {
   border-color: #f3f4f6;
-  color: #fbbf24;
+  color: #f3f4f6;
 }
 
-body.dark .dark-mode-toggle:hover {
+body.dark .mobile-time-toggle:hover {
   background: #374151;
 }
