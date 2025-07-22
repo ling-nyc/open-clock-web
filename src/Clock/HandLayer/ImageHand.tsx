@@ -11,10 +11,10 @@ import type { HandProps } from './types';
  */
 const ImageHand: FunctionComponent<HandProps> = ({
   assets,
-  layer: { imageFilename, scale },
+  layer: { scale, imageFilename: layerImageFilename },
   position: { x, y },
   angle,
-  handOptions: { imageAnchorX, imageAnchorY },
+  handOptions: { imageAnchorX = '0.5', imageAnchorY = '0.5', imageFilename: handImageFilename },
   animationType,
 }) => {
   const ref = useRef<SVGImageElement | null>(null);
@@ -36,7 +36,9 @@ const ImageHand: FunctionComponent<HandProps> = ({
     }
   }, [ref, angle, x, y, animationType]);
 
-  const asset = assets[imageFilename];
+  // Check both locations for imageFilename (backward compatibility)
+  const imageFilename = handImageFilename || layerImageFilename;
+  const asset = imageFilename ? assets[imageFilename] : null;
   if (!asset) {
     return null;
   }

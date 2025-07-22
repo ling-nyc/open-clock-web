@@ -1,5 +1,5 @@
 import { ComponentType, FunctionComponent, useMemo, useEffect } from 'react';
-import { ClockLayer, ClockLayerType } from '../open-clock';
+import { ClockLayer, ClockLayerType, ClockLayerTypeEnum } from '../open-clock';
 import TextLayer from './TextLayer';
 import type { Assets, LayerProps } from './LayerProps';
 import HandLayer from './HandLayer';
@@ -9,15 +9,15 @@ const layerTypes: Record<
   ClockLayerType,
   ComponentType<LayerProps> | undefined
 > = {
-  [ClockLayerType.BatteryIndicator]: undefined,
-  [ClockLayerType.DataBar]: undefined,
-  [ClockLayerType.DataLabel]: undefined,
-  [ClockLayerType.DataRing]: undefined,
-  [ClockLayerType.DateTime]: TextLayer,
-  [ClockLayerType.Hand]: HandLayer,
-  [ClockLayerType.Icon]: undefined,
-  [ClockLayerType.Image]: ImageLayer,
-  [ClockLayerType.Text]: TextLayer,
+  [ClockLayerTypeEnum.BatteryIndicator]: undefined,
+  [ClockLayerTypeEnum.DataBar]: undefined,
+  [ClockLayerTypeEnum.DataLabel]: undefined,
+  [ClockLayerTypeEnum.DataRing]: undefined,
+  [ClockLayerTypeEnum.DateTime]: TextLayer,
+  [ClockLayerTypeEnum.Hand]: HandLayer,
+  [ClockLayerTypeEnum.Icon]: undefined,
+  [ClockLayerTypeEnum.Image]: ImageLayer,
+  [ClockLayerTypeEnum.Text]: TextLayer,
 };
 
 interface Props {
@@ -72,16 +72,18 @@ const Layer: FunctionComponent<Props> = ({
     // Check for hand layers with image hands
     if (
       onMissingImage &&
-      layer.type === ClockLayerType.Hand &&
-      layer.handOptions?.useImage &&
-      layer.handOptions.imageFilename &&
-      layer.handOptions.imageFilename.trim() !== ''
+      layer.type === ClockLayerTypeEnum.Hand &&
+      layer.handOptions?.useImage
     ) {
-      if (!assets[layer.handOptions.imageFilename]) {
-        console.log(
-          `Missing hand image detected: ${layer.handOptions.imageFilename}`
-        );
-        onMissingImage(layer.handOptions.imageFilename);
+      // Check both locations for imageFilename (backward compatibility)
+      const handImageFilename = layer.handOptions.imageFilename || layer.imageFilename;
+      if (handImageFilename && handImageFilename.trim() !== '') {
+        if (!assets[handImageFilename]) {
+          console.log(
+            `Missing hand image detected: ${handImageFilename}`
+          );
+          onMissingImage(handImageFilename);
+        }
       }
     }
   }, [layer, assets, onMissingImage]);
@@ -99,7 +101,7 @@ const Layer: FunctionComponent<Props> = ({
   const transform =
     layer.angleOffset === '0.0'
       ? undefined
-      : `rotate(${radiansToDegrees(layer.angleOffset)},${position.x},${
+      : `rotate(${radiansToDegrees(layer.angleOffset || '0')},${position.x},${
           position.y
         })`;
 

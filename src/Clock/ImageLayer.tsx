@@ -12,7 +12,7 @@ const ImageLayer: FunctionComponent<LayerProps> = ({
   assets,
   position: { x, y },
 }) => {
-  const asset = assets[imageFilename];
+  const asset = imageFilename ? assets[imageFilename] : null;
 
   // If no image filename specified or no asset found, render nothing
   if (!imageFilename || !asset) {

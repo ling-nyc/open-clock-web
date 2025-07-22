@@ -28,7 +28,7 @@ function formatErrorMessage(error: any): string {
         const layer = match ? match[1] : '?';
         return `Layer ${layer}: Invalid or unsupported dateTimeFormat value in textOptions.`;
       }
-    } catch {}
+    } catch { }
   }
   // Fallback: show the error as a string
   return typeof error === 'string' ? error : JSON.stringify(error);
@@ -119,7 +119,7 @@ const AppInner: FunctionComponent = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -146,7 +146,7 @@ const AppInner: FunctionComponent = () => {
       <FontCacheMenu />
       {/* Dark mode toggle button at top right */}
       <DarkModeToggle />
-      
+
       {/* Mobile time customizer toggle - top left */}
       {isMobile && hasContent && (
         <button
@@ -176,7 +176,7 @@ const AppInner: FunctionComponent = () => {
             isVisible={isMobile ? isTimeCustomizerVisible : true}
             onToggleVisibility={() => setIsTimeCustomizerVisible(!isTimeCustomizerVisible)}
           />
-          
+
           {/* Clock preview - directly in main content */}
           <div ref={fullscreenRef} className="preview-pill">
             <ClocksOrError parseResults={parseResults} />

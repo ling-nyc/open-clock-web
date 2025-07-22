@@ -40,7 +40,7 @@ const clockAssetsToAssets = (clockAssets?: ClockAsset[]): Assets => {
   } else {
     return Object.fromEntries(
       clockAssets.flatMap((asset) => {
-        const buf = decode(asset.imageData);
+        const buf = decode(asset.imageData || '');
         const dimensions = getDimensions(buf);
         if (dimensions) {
           return [

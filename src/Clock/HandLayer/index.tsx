@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react';
 import type { LayerProps } from '../LayerProps';
 import { useTime } from '../../TimeContext';
-import { ClockLayerHandTypes as HandType } from '../../open-clock';
+import { ClockLayerHandTypesEnum } from '../../open-clock';
 import ImageHand from './ImageHand';
 import angleExtractors from './angleExtractors';
 
@@ -24,8 +24,11 @@ const HandLayer: FunctionComponent<LayerProps> = ({
     return null;
   }
 
-  const fraction = angleExtractors[handOptions.handType](now);
-  const angle = 360 * (handOptions.animateClockwise ? fraction : 1 - fraction);
+  const fraction = angleExtractors[handOptions.handType || ClockLayerHandTypesEnum.Hour](now);
+  const angle = 360 * ((handOptions.animateClockwise || false) ? fraction : 1 - fraction);
+
+  // Debug logging
+  console.log(`HandLayer - Type: ${handOptions.handType}, Fraction: ${fraction}, Angle: ${angle}, UseImage: ${handOptions.useImage}`);
   if (handOptions.useImage) {
     return (
       <ImageHand
@@ -35,12 +38,17 @@ const HandLayer: FunctionComponent<LayerProps> = ({
         angle={angle}
         handOptions={handOptions}
         animationType={
-          handOptions.handType === HandType.Second ? 'smooth' : 'set'
+          handOptions.handType === ClockLayerHandTypesEnum.Second ? 'smooth' : 'set'
         }
       />
     );
   } else {
-    return <use href={`hands.svg#${handOptions.handStyle}`} rotate={angle} />;
+    return (
+      <use
+        href={`#${handOptions.handStyle || 'default'}`}
+        transform={`rotate(${angle} ${position.x} ${position.y})`}
+      />
+    );
   }
 };
 

@@ -3,9 +3,9 @@ import '@testing-library/jest-dom';
 import Clock from '../Clock';
 import {
   ClockWrapper,
-  ClockLayerType,
-  ClockLayerTextCasing,
-  ClockLayerTextJustification,
+  ClockLayerTypeEnum,
+  ClockLayerTextCasingEnum,
+  ClockLayerTextJustificationEnum,
 } from '../open-clock';
 
 const mockClock: ClockWrapper = {
@@ -22,16 +22,16 @@ const mockClock: ClockWrapper = {
         imageFilename: '',
         isHidden: false,
         scale: '1.0',
-        type: ClockLayerType.Text,
+        type: ClockLayerTypeEnum.Text,
         verticalPosition: '0.0',
         zIndex: 0,
         textOptions: {
-          casingType: ClockLayerTextCasing.None,
+          casingType: ClockLayerTextCasingEnum.None,
           customText: 'hello world',
           effectType: '',
-          fontDescription: '',
+
           fontFilename: '',
-          justification: ClockLayerTextJustification.Centered,
+          justification: ClockLayerTextJustificationEnum.Centered,
           kerning: '0',
           outlineColor: '#000000',
           outlineWidth: '0',

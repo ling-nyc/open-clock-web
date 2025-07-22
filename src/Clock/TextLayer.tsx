@@ -13,10 +13,11 @@ import { toWords } from 'number-to-words';
 import { LayerProps } from './LayerProps';
 import { useTime } from '../TimeContext';
 import {
-  ClockLayerTextCasing as Casing,
-  ClockLayerTextJustification as Justification,
-  ClockLayerTextOptionsDateTimeFormat as Format,
-  ClockLayerType,
+  ClockLayerDateTimeFormat as Format,
+  ClockLayerTypeEnum,
+  ClockLayerTextCasingEnum,
+  ClockLayerTextJustificationEnum,
+  ClockLayerDateTimeFormatEnum,
 } from '../open-clock';
 import { useFontCheck } from './useFontCheck';
 
@@ -43,64 +44,57 @@ const w =
     }
   };
 
-const formatPatterns: {
-  [K in Format]: FormatFunction | string | undefined;
-} = {
-  [Format.City]: undefined,
-  [Format.Colon]: ':',
-  [Format.Country]: undefined,
-  [Format.Da]: p('eee'),
-  [Format.Dadd]: p('eee d'),
-  [Format.Dd]: p('dd'),
-  [Format.Ddauto]: p('d'),
-  [Format.Ddmm]: p('d MMM'),
-  [Format.Dl]: p('EEEE'),
-  [Format.Dw]: p('E'),
-  [Format.Dy]: p('D'),
-  [Format.Hh]: p('hh'),
-  [Format.Hhmm]: p('h:mm'),
-  [Format.Hhmmpm]: p('h:mm a'),
-  [Format.Hhmmss]: p('h:mm:ss'),
-  [Format.HourWord]: w(ChronoField.HOUR_OF_AMPM),
-  [Format.HourWordUnit]: w(ChronoField.HOUR_OF_AMPM, 'hour', 'hours'),
-  [Format.Ml]: p('MMMM'),
-  [Format.Mm]: p('mm'),
-  [Format.Mmdd]: p('MMM d'),
-  [Format.Mn]: p('M'),
-  [Format.Mo]: p('MMM'),
-  [Format.MinuteWord]: w(ChronoField.MINUTE_OF_HOUR),
-  [Format.MinuteWordUnit]: w(ChronoField.MINUTE_OF_HOUR, 'minute', 'minutes'),
-  [Format.Pm]: p('a'),
-  [Format.Ss]: p('ss'),
-  [Format.SecondsWord]: w(ChronoField.SECOND_OF_MINUTE),
-  [Format.SecondsWordUnit]: w(
+const formatPatterns: Record<string, FormatFunction | string | undefined> = {
+  [ClockLayerDateTimeFormatEnum.City]: undefined,
+  [ClockLayerDateTimeFormatEnum.Colon]: ':',
+  [ClockLayerDateTimeFormatEnum.Country]: undefined,
+  [ClockLayerDateTimeFormatEnum.Da]: p('eee'),
+  [ClockLayerDateTimeFormatEnum.Dadd]: p('eee d'),
+  [ClockLayerDateTimeFormatEnum.Dd]: p('dd'),
+  [ClockLayerDateTimeFormatEnum.Ddauto]: p('d'),
+  [ClockLayerDateTimeFormatEnum.Ddmm]: p('d MMM'),
+  [ClockLayerDateTimeFormatEnum.Dl]: p('EEEE'),
+  [ClockLayerDateTimeFormatEnum.Dw]: p('E'),
+  [ClockLayerDateTimeFormatEnum.Dy]: p('D'),
+  [ClockLayerDateTimeFormatEnum.Hh]: p('hh'),
+  [ClockLayerDateTimeFormatEnum.Hhmm]: p('h:mm'),
+  [ClockLayerDateTimeFormatEnum.Hhmmpm]: p('h:mm a'),
+  [ClockLayerDateTimeFormatEnum.Hhmmss]: p('h:mm:ss'),
+  [ClockLayerDateTimeFormatEnum.HourWord]: w(ChronoField.HOUR_OF_AMPM),
+  [ClockLayerDateTimeFormatEnum.HourWordUnit]: w(ChronoField.HOUR_OF_AMPM, 'hour', 'hours'),
+  [ClockLayerDateTimeFormatEnum.Ml]: p('MMMM'),
+  [ClockLayerDateTimeFormatEnum.Mm]: p('mm'),
+  [ClockLayerDateTimeFormatEnum.Mmdd]: p('MMM d'),
+  [ClockLayerDateTimeFormatEnum.Mn]: p('M'),
+  [ClockLayerDateTimeFormatEnum.Mo]: p('MMM'),
+  [ClockLayerDateTimeFormatEnum.MinuteWord]: w(ChronoField.MINUTE_OF_HOUR),
+  [ClockLayerDateTimeFormatEnum.MinuteWordUnit]: w(ChronoField.MINUTE_OF_HOUR, 'minute', 'minutes'),
+  [ClockLayerDateTimeFormatEnum.Pm]: p('a'),
+  [ClockLayerDateTimeFormatEnum.Ss]: p('ss'),
+  [ClockLayerDateTimeFormatEnum.SecondsWord]: w(ChronoField.SECOND_OF_MINUTE),
+  [ClockLayerDateTimeFormatEnum.SecondsWordUnit]: w(
     ChronoField.SECOND_OF_MINUTE,
     'second',
     'seconds'
   ),
-  [Format.Slash]: '/',
-  [Format.Wy]: p('w'),
-  [Format.Yy]: p('yy'),
-  [Format.Yyyy]: p('yyyy'),
-  [Format.DataLabel]: undefined,
+  [ClockLayerDateTimeFormatEnum.Slash]: '/',
+  [ClockLayerDateTimeFormatEnum.Wy]: p('w'),
+  [ClockLayerDateTimeFormatEnum.Yy]: p('yy'),
+  [ClockLayerDateTimeFormatEnum.Yyyy]: p('yyyy'),
 };
 
-const textAnchors: {
-  [K in Justification]: Property.TextAnchor;
-} = {
-  [Justification.Centered]: 'middle',
-  [Justification.Left]: 'start',
-  [Justification.Right]: 'end',
+const textAnchors: Record<string, Property.TextAnchor> = {
+  [ClockLayerTextJustificationEnum.Centered]: 'middle',
+  [ClockLayerTextJustificationEnum.Left]: 'start',
+  [ClockLayerTextJustificationEnum.Right]: 'end',
 };
 
-const textTransforms: {
-  [K in Casing]: Property.TextTransform | undefined;
-} = {
-  [Casing.Lower]: 'lowercase',
-  [Casing.None]: undefined,
-  [Casing.Sentence]: undefined, // not supported by CSS. ¯\_(ツ)_/¯
-  [Casing.Uppercased]: 'uppercase',
-  [Casing.Word]: 'capitalize',
+const textTransforms: Record<string, Property.TextTransform | undefined> = {
+  [ClockLayerTextCasingEnum.Lower]: 'lowercase',
+  [ClockLayerTextCasingEnum.None]: undefined,
+  [ClockLayerTextCasingEnum.Sentence]: undefined, // not supported by CSS. ¯\_(ツ)_/¯
+  [ClockLayerTextCasingEnum.Uppercased]: 'uppercase',
+  [ClockLayerTextCasingEnum.Word]: 'capitalize',
 };
 
 const DateTimeText: FunctionComponent<DateTimeTextProps> = ({
@@ -154,17 +148,17 @@ const TextLayer: FunctionComponent<LayerProps> = ({
   }, [isLoaded, errorMessage, fontFamily, onMissingFont]);
 
   const style: CSSProperties = {
-    textTransform: textTransforms[layer.textOptions.casingType],
+    textTransform: textTransforms[layer.textOptions.casingType || ClockLayerTextCasingEnum.None],
     fontFamily:
       !isLoaded && errorMessage ? 'sans-serif' : fontFamily || 'sans-serif',
     fontSize: `${Number(layer.scale) * 46.5}px`,
-    textAnchor: textAnchors[layer.textOptions.justification] || textAnchors[Justification.Centered],
+    textAnchor: textAnchors[layer.textOptions.justification || ClockLayerTextJustificationEnum.Centered] || textAnchors[ClockLayerTextJustificationEnum.Centered],
     fill: layer.fillColor,
   };
 
   return (
     <text x={x} y={y} style={style}>
-      {layer.type === ClockLayerType.DateTime ? (
+      {layer.type === ClockLayerTypeEnum.DateTime ? (
         <DateTimeText dateTimeFormat={layer.textOptions.dateTimeFormat} />
       ) : (
         layer.textOptions.customText

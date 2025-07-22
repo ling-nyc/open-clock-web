@@ -1,5 +1,5 @@
 import { ChronoField } from '@js-joda/core';
-import { ClockLayerHandTypes as HandType } from '../../open-clock';
+import { ClockLayerHandTypesEnum } from '../../open-clock';
 import type { AngleExtractor } from './types';
 
 const seconds: AngleExtractor = (time) =>
@@ -9,10 +9,10 @@ const minutes: AngleExtractor = (time) =>
 const hours: AngleExtractor = (time) =>
   (time.get(ChronoField.HOUR_OF_AMPM) + minutes(time)) / 12;
 
-const angleExtractors: { [K in HandType]: AngleExtractor } = {
-  [HandType.Hour]: hours,
-  [HandType.Minute]: minutes,
-  [HandType.Second]: seconds,
+const angleExtractors: Record<string, AngleExtractor> = {
+  [ClockLayerHandTypesEnum.Hour]: hours,
+  [ClockLayerHandTypesEnum.Minute]: minutes,
+  [ClockLayerHandTypesEnum.Second]: seconds,
 };
 
 /**

@@ -41,6 +41,9 @@ export const TimeProvider: FunctionComponent<{ children: ReactNode }> = ({
 
     const tick = () => setNow(ZonedDateTime.now());
 
+    // Initial tick to sync immediately
+    tick();
+
     const delay = 1000 - (Date.now() % 1000);
     let intervalId: NodeJS.Timeout | undefined;
     const timeoutId = setTimeout(() => {

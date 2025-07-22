@@ -1,6 +1,6 @@
-import { validate, Schema, ValidationError } from 'jtd';
+import Ajv, { ErrorObject } from 'ajv';
 import { ClockWrapper } from './open-clock';
-import schema from '../schemas/ClockWrapper.jtd.json';
+import schema from '../schemas/ClockWrapper.json';
 
 export interface ClockParseResult {
   clock: ClockWrapper;
@@ -8,8 +8,11 @@ export interface ClockParseResult {
 
 export type ParseResult =
   | ClockParseResult
-  | { errors: readonly ValidationError[] }
+  | { errors: readonly ErrorObject[] }
   | { exception: string };
+
+const ajv = new Ajv();
+const validate = ajv.compile(schema);
 
 /**
  * Parse a clock JSON string and validate it against the schema.
@@ -20,11 +23,11 @@ export type ParseResult =
 const parser = (json: string): ParseResult => {
   try {
     const clock = JSON.parse(json);
-    const errors = validate(schema as Schema, clock);
-    if (errors.length === 0) {
-      return { clock };
+    const valid = validate(clock);
+    if (valid) {
+      return { clock: clock as unknown as ClockWrapper };
     } else {
-      return { errors };
+      return { errors: validate.errors || [] };
     }
   } catch (e) {
     return {
