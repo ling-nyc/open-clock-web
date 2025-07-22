@@ -40,33 +40,71 @@ body.dark .preview-pill {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
 }
 
-/* Fullscreen mode - center the clock properly */
-.preview-pill:fullscreen,
+/* Fullscreen container - normal mode */
+.fullscreen-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fullscreen container - when in fullscreen mode */
 .fullscreen-container:fullscreen {
-  background: black !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  width: 100vw !important;
-  height: 100vh !important;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
-.preview-pill:fullscreen .clockwidget,
+/* Clock widget sizing - normal mode (in preview) */
+.preview-pill .clockwidget {
+  max-width: 400px;
+  max-height: 400px;
+  width: auto;
+  height: auto;
+}
+
+/* Clock widget sizing - fullscreen mode */
 .fullscreen-container:fullscreen .clockwidget {
-  max-width: 90vmin !important;
-  max-height: 90vmin !important;
-  width: 90vmin !important;
-  height: 90vmin !important;
+  width: min(70vw, 70vh, 800px);
+  height: min(70vw, 70vh, 800px);
+  max-width: min(70vw, 70vh, 800px);
+  max-height: min(70vw, 70vh, 800px);
+  margin: 0 !important;
+  display: block;
 }
 
-/* Reset styles when not in fullscreen to prevent size issues */
-.preview-pill:not(:fullscreen) .clockwidget {
-  width: auto !important;
-  height: auto !important;
-  max-width: 100vw !important;
-  max-height: 70vh !important;
+/* Exit fullscreen button */
+.fullscreen-exit-button {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.fullscreen-exit-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.fullscreen-exit-button:active {
+  transform: translateX(-50%) translateY(0px);
 }

@@ -1,4 +1,4 @@
-import { FunctionComponent, useMemo } from 'react';
+import { useMemo, forwardRef } from 'react';
 import {
   CarouselProvider,
   Slider,
@@ -27,11 +27,10 @@ interface Props {
  * - height: Height of each clock display.
  * - ratio: Width/height ratio for each clock.
  */
-const MultipleClocks: FunctionComponent<Props> = ({
-  clocks,
-  height,
-  ratio,
-}) => {
+const MultipleClocks = forwardRef<
+  { enterFullscreen: () => Promise<boolean>; exitFullscreen: () => Promise<boolean>; isFullscreen: boolean },
+  Props
+>(({ clocks, height, ratio }, ref) => {
   // Memoized style object for consistent sizing of carousel and clocks
   const style = useMemo(
     () => ({
@@ -48,7 +47,7 @@ const MultipleClocks: FunctionComponent<Props> = ({
       totalSlides={clocks.length}
       infinite
     >
-      <Fullscreenable>
+      <Fullscreenable ref={ref}>
         <Slider style={style}>
           {clocks.map((clock, index) => (
             <Slide index={index} key={clock.clockStandard.title}>
@@ -66,6 +65,8 @@ const MultipleClocks: FunctionComponent<Props> = ({
       <ButtonNext>»</ButtonNext>
     </CarouselProvider>
   );
-};
+});
+
+MultipleClocks.displayName = 'MultipleClocks';
 
 export default MultipleClocks;

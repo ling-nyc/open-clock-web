@@ -51,12 +51,14 @@ const getMessage = (rs: ParseResult[]): string[] =>
  * @param parseResults - Results returned by the clock JSON parser.
  * @param height - Height of each clock.
  * @param ratio - Width/height ratio for the clocks.
+ * @param fullscreenRef - Ref to pass to the Fullscreenable component.
  */
 const ClocksOrError: FunctionComponent<{
   parseResults: ParseResult[];
   height?: number;
   ratio?: number;
-}> = ({ parseResults, height = 400, ratio = 0.82 }) => {
+  fullscreenRef?: React.RefObject<{ enterFullscreen: () => Promise<boolean>; exitFullscreen: () => Promise<boolean>; isFullscreen: boolean }>;
+}> = ({ parseResults, height = 400, ratio = 0.82, fullscreenRef }) => {
   const errors = getMessage(parseResults);
   if (errors.length > 0) {
     return (
@@ -80,7 +82,7 @@ const ClocksOrError: FunctionComponent<{
   } else if (parseResults.length === 1 && 'clock' in parseResults[0]) {
     // If there is exactly one valid clock, render it in fullscreen mode
     return (
-      <Fullscreenable>
+      <Fullscreenable ref={fullscreenRef}>
         <Clock clock={parseResults[0].clock} height={height} ratio={ratio} />
       </Fullscreenable>
     );
@@ -89,7 +91,7 @@ const ClocksOrError: FunctionComponent<{
     const clocks = (parseResults as ClockParseResult[]).map(
       ({ clock }) => clock
     );
-    return <MultipleClocks clocks={clocks} height={height} ratio={ratio} />;
+    return <MultipleClocks clocks={clocks} height={height} ratio={ratio} ref={fullscreenRef} />;
   }
 };
 
@@ -106,7 +108,7 @@ const AppInner: FunctionComponent = () => {
 
   // Memoized parse results from the uploaded JSONs
   const parseResults = useMemo(() => jsons.map(parser), [jsons]);
-  const fullscreenRef = useRef<HTMLDivElement>(null);
+  const fullscreenRef = useRef<{ enterFullscreen: () => Promise<boolean>; exitFullscreen: () => Promise<boolean>; isFullscreen: boolean }>(null);
 
   // Access time context
   const { customTime, setCustomTime } = useTimeContext();
@@ -126,16 +128,12 @@ const AppInner: FunctionComponent = () => {
   }, []);
 
   // Handler to trigger fullscreen on the preview
-  const handleFullscreen = () => {
-    const node = fullscreenRef.current;
-    if (
-      node &&
-      node.firstElementChild &&
-      (node.firstElementChild as any).requestFullscreen
-    ) {
-      (node.firstElementChild as any).requestFullscreen({
-        navigationUI: 'show',
-      });
+  const handleFullscreen = async () => {
+    if (fullscreenRef.current) {
+      const success = await fullscreenRef.current.enterFullscreen();
+      if (!success) {
+        console.warn('Fullscreen failed');
+      }
     }
   };
 
@@ -178,8 +176,8 @@ const AppInner: FunctionComponent = () => {
           />
 
           {/* Clock preview - directly in main content */}
-          <div ref={fullscreenRef} className="preview-pill">
-            <ClocksOrError parseResults={parseResults} />
+          <div className="preview-pill">
+            <ClocksOrError parseResults={parseResults} fullscreenRef={fullscreenRef} />
           </div>
         </div>
       )}
