@@ -8,18 +8,20 @@ import type { LayerProps } from './LayerProps';
  * @param assets - Map of available assets keyed by filename.
  */
 const ImageLayer: FunctionComponent<LayerProps> = ({
-  layer: { imageFilename, scale },
+  layer: { filename, scale },
   assets,
   position: { x, y },
 }) => {
-  const asset = imageFilename ? assets[imageFilename] : null;
+  const asset = filename ? assets[filename] : null;
 
   // If no image filename specified or no asset found, render nothing
-  if (!imageFilename || !asset) {
+  if (!filename || !asset) {
     return null;
   }
 
-  const s = (Number(scale) * 200) / 275;
+  // Scale images to be proportional to the coordinate system
+  // Use a scaling factor that makes images appropriately sized
+  const s = Number(scale) * 0.8; // Adjusted scaling factor
   const width = asset.width * s;
   const height = asset.height * s;
 

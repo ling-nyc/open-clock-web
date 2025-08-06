@@ -32,6 +32,9 @@ Thumbs.db
 # Generated files
 src/font-names.json
 
+# Temporary schema example
+schema.example.json
+
 # Test coverage
 coverage/
 *.lcov

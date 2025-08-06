@@ -37,11 +37,19 @@ const Clock: FunctionComponent<Props> = ({
   // State for managing toast notifications
   const [toasts, setToasts] = useState<ToastData[]>([]);
 
-  // Calculate width and other layout properties
-  const width = ratio * height;
+  // Calculate width and other layout properties based on canvas settings
+  const canvas = clock.clockStandard.canvas;
+  const canvasWidth = canvas?.width ?? 199.0;
+  const canvasHeight = canvas?.height ?? 242.0;
+  const canvasRatio = canvasWidth / canvasHeight;
+
+  // Use canvas ratio if available, otherwise fall back to provided ratio
+  const effectiveRatio = canvas ? canvasRatio : ratio;
+  const width = effectiveRatio * height;
+
   const style = useMemo(
     () => ({ width: `${width}px`, height: `${height}px` }),
-    [ratio, height]
+    [width, height]
   );
 
   // Get decoded assets from the clock file
@@ -160,7 +168,12 @@ const Clock: FunctionComponent<Props> = ({
     setImportError(null);
   };
 
-  const viewBox = `${-100 * ratio} -100 ${200 * ratio} 200`;
+  // Calculate viewBox based on canvas dimensions
+  const viewBoxWidth = 200 * effectiveRatio;
+  const viewBoxHeight = 200;
+  const viewBoxX = -100 * effectiveRatio;
+  const viewBoxY = -100;
+  const viewBox = `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`;
 
   return (
     <div>
@@ -179,15 +192,17 @@ const Clock: FunctionComponent<Props> = ({
       <MaybeWrapper render={wrapper} style={style}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="clockwidget"
+          className={`clockwidget ${canvas?.type ?? 'watchFace'}`}
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid meet"
         >
           {clock.clockStandard.layers.map((layer) => (
             <Layer
               assets={assets}
-              ratio={ratio}
+              ratio={effectiveRatio}
               layer={layer}
+              canvasWidth={canvasWidth}
+              canvasHeight={canvasHeight}
               key={layer.zIndex}
               onMissingImage={handleMissingImage}
               onMissingFont={handleMissingFont}

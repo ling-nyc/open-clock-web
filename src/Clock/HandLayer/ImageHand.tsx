@@ -11,7 +11,7 @@ import type { HandProps } from './types';
  */
 const ImageHand: FunctionComponent<HandProps> = ({
   assets,
-  layer: { scale, imageFilename: layerImageFilename },
+  layer: { scale, filename: layerFilename, imageFilename: layerImageFilename },
   position: { x, y },
   angle,
   handOptions: { imageAnchorX = '0.5', imageAnchorY = '0.5', imageFilename: handImageFilename },
@@ -37,12 +37,14 @@ const ImageHand: FunctionComponent<HandProps> = ({
   }, [ref, angle, x, y, animationType]);
 
   // Check both locations for imageFilename (backward compatibility)
-  const imageFilename = handImageFilename || layerImageFilename;
+  const imageFilename = handImageFilename || layerFilename || layerImageFilename;
   const asset = imageFilename ? assets[imageFilename] : null;
   if (!asset) {
     return null;
   }
-  const s = (Number(scale) * 200) / 275;
+  // Scale images to be proportional to the coordinate system
+  // Use a scaling factor that makes images appropriately sized
+  const s = Number(scale) * 0.8; // Adjusted scaling factor
   const width = asset.width * s;
   const height = asset.height * s;
   const cx = Number(imageAnchorX);

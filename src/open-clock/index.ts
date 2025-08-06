@@ -12,23 +12,32 @@ export interface ClockAsset {
 }
 
 export interface ClockStandard {
-  version: string;
+  version?: number;
   title: string;
+  canvas?: ClockCanvas;
   layers: ClockLayer[];
+}
+
+export interface ClockCanvas {
+  width?: number;
+  height?: number;
+  type?: 'watchFace' | 'squareWidget' | 'wideWidget';
 }
 
 export interface ClockLayer {
   type: ClockLayerType;
   zIndex: number;
   customName?: string;
-  imageFilename?: string;
+  filename?: string;
+  imageFilename?: string; // Backward compatibility property
   fillColor?: string;
-  alpha?: string;
-  horizontalPosition?: string;
-  verticalPosition?: string;
-  scale?: string;
-  angleOffset?: string;
+  alpha?: number;
+  horizontalPosition?: number;
+  verticalPosition?: number;
+  scale?: number;
+  angleOffset?: number;
   isHidden?: boolean;
+  dataSource?: ClockLayerDataSource;
   textOptions?: ClockLayerTextOptions;
   iconOptions?: ClockLayerIconOptions;
   dataLabelOptions?: ClockLayerDataLabelOptions;
@@ -38,32 +47,36 @@ export interface ClockLayer {
   dataRingOptions?: ClockLayerDataRingOptions;
 }
 
-export type ClockLayerType = "dateTime" | "text" | "icon" | "dataLabel" | "image" | "hand" | "dataBar" | "dataRing" | "batteryIndicator";
+export type ClockLayerType = "dateTime" | "text" | "icon" | "dataLabel" | "image" | "hand" | "dataBar" | "dataRing";
+
+export type ClockLayerDataSource = "Steps" | "StepCount" | "HeartRate" | "EnergyBurned" | "EnergyBurnedGoal" | "ExerciseTime" | "ExerciseTimeGoal" | "StandTime" | "StandTimeGoal" | "DistanceWalkRun" | "DistanceWalkRunUnit" | "FlightsClimbed" | "Temperature" | "TempertureMin" | "TempertureMax" | "Sunrise" | "Sunset" | "FeelsLike" | "ChanceOfPrecip" | "RainAmount" | "WeatherDescription" | "WeatherDescriptionCaps" | "WeatherIcon" | "WeatherDailyDayTemp" | "WeatherDailyNightTemp" | "WeatherDailyEveTemp" | "WeatherDailyMornTemp" | "Battery" | "BatteryNum" | "BatteryLevel";
 
 export interface ClockLayerTextOptions {
   dateTimeFormatDescription?: string;
-  fontFamily?: string;
+  fontFamily?: ClockLayerFontFamily;
   fontFilename?: string;
   customText?: string;
   effectType?: string;
-  outlineWidth?: string;
+  outlineWidth?: number;
   outlineColor?: string;
-  kerning?: string;
+  kerning?: number;
   justification?: ClockLayerTextJustification;
   casingType?: ClockLayerTextCasing;
   dateTimeFormat?: ClockLayerDateTimeFormat;
 }
 
+export type ClockLayerFontFamily = "HelveticaNeue-Bold" | "RationalInteger" | "BlackRose" | "ConeriaScriptDemo" | "PlainGermanica" | "RothenburgDecorative" | "KingthingsFoundation" | "TrajanPro-Regular" | "DINPro-Light" | "UltraCondensedSerif" | "IronLounge2" | "Digital-7Mono" | "Digital-7MonoItalic" | "NixieOne" | "Lcdphone" | "Joystix" | "PixelMillennium" | "Cape_Corn" | "Bauhaus93" | "FuturaCondXBooldOblique" | "BenguiatBold" | "SF Mono" | "SFCompactDisplay-Regular" | "Impact" | "LIBRARY3AM" | "Trench-Thin" | "FontaniaRegular" | "28-SegmentLEDDisplay" | "AunchantedXspaceThin" | "BitstreamVeraSansMono-Roman" | "Street-Soul" | "Chinese-Brush" | "Code-Squared" | "Jeepers" | "KoolBeans" | "QuatreQuarts" | "Spacearella" | "Grinched" | "AshcanBB" | "Ballsontherampage" | "Unnamed-Regular" | "ManaspaceReg" | "TwoFiftySixBytes-Regular" | "NewsflashBB" | "AzonixRegular" | "CaviarDreams" | "OPTICopperplate" | "Roboto-Regular" | "SteelfishRg-Regular" | "BebasKai";
+
 export type ClockLayerTextJustification = "left" | "right" | "centered";
 
 export type ClockLayerTextCasing = "none" | "lower" | "sentence" | "uppercased" | "word";
 
-export type ClockLayerDateTimeFormat = "" | "HHMMSS" | "HHMM" | "HHMMPM" | "HH" | "MM" | "SS" | "PM" | "DADD" | "DDMM" | "MMDD" | "MO" | "ML" | "MN" | "DA" | "DD" | "DDAuto" | "DL" | "DY" | "DW" | "WY" | "YY" | "YYYY" | "Colon" | "Slash" | "City" | "Country" | "HourWord" | "MinuteWord" | "SecondsWord" | "HourWordUnit" | "MinuteWordUnit" | "SecondsWordUnit";
+export type ClockLayerDateTimeFormat = "HHMMSS" | "HHMM" | "HHMMPM" | "HH" | "MM" | "SS" | "PM" | "DADD" | "DDMM" | "MMDD" | "MO" | "ML" | "MN" | "DA" | "DD" | "DDAuto" | "DL" | "DY" | "DW" | "WY" | "YY" | "YYYY" | "Colon" | "Slash" | "City" | "Country" | "HourWord" | "MinuteWord" | "SecondsWord" | "HourWordUnit" | "MinuteWordUnit" | "SecondsWordUnit";
 
 export interface ClockLayerHandOptions {
   useImage?: boolean;
   handType?: ClockLayerHandTypes;
-  handStyle?: string;
+  handStyle?: ClockLayerHandStyle;
   handStyleDescription?: string;
   animateClockwise?: boolean;
   imageAnchorX?: string;
@@ -71,11 +84,12 @@ export interface ClockLayerHandOptions {
   imageFilename?: string;
 }
 
+export type ClockLayerHandStyle = "rounded" | "classicOutline" | "classic" | "swiss" | "swissCircle" | "flatDial" | "thinDial" | "blocky" | "arrow" | "roman" | "pie" | "pieInverted";
+
 export type ClockLayerHandTypes = "second" | "minute" | "hour";
 
 export interface ClockLayerDataLabelOptions {
   unitDisplayLevel?: "short" | "medium" | "long";
-  dataLabelFormat?: "Steps" | "StepsLong" | "StepsShort" | "StepsSymbol" | "HeartRate" | "EnergyBurned" | "EnergyBurnedGoal" | "ExerciseTime" | "ExerciseTimeGoal" | "StandTime" | "StandTimeGoal" | "ActivitySummary" | "GoalSummary" | "GoalSummaryPercent" | "GoalSummaryPercentWithSymbols" | "DistanceWalkRun" | "DistanceWalkRunUnit" | "FlightsClimbed" | "Temperature" | "TempertureMin" | "TempertureMax" | "Sunrise" | "Sunset" | "FeelsLike" | "ChanceOfPrecip" | "RainAmount" | "WeatherDescription" | "WeatherDescriptionCaps" | "WeatherIcon" | "WeatherDailyDayTemp" | "WeatherDailyNightTemp" | "WeatherDailyEveTemp" | "WeatherDailyMornTemp" | "AppleTime" | "Battery" | "BatteryNum" | "BatteryLevel";
 }
 
 export interface ClockLayerIconOptions {
@@ -96,7 +110,6 @@ export interface ClockLayerDataBarOptions {
 
 // Legacy enum exports for backward compatibility
 export const ClockLayerTypeEnum = {
-  BatteryIndicator: 'batteryIndicator' as const,
   DataBar: 'dataBar' as const,
   DataLabel: 'dataLabel' as const,
   DataRing: 'dataRing' as const,

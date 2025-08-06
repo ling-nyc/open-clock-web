@@ -73,10 +73,10 @@ body.dark .preview-pill {
 
 /* Clock widget sizing - fullscreen mode */
 .fullscreen-container:fullscreen .clockwidget {
-  width: min(70vw, 70vh, 800px);
-  height: min(70vw, 70vh, 800px);
-  max-width: min(70vw, 70vh, 800px);
-  max-height: min(70vw, 70vh, 800px);
+  width: auto;
+  height: min(70vh, 800px);
+  max-width: 90vw;
+  max-height: min(70vh, 800px);
   margin: 0 !important;
   display: block;
 }

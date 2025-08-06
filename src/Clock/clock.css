@@ -11,6 +11,25 @@
   transition: all 0.3s ease;
 }
 
+/* Canvas type specific styles */
+.clockwidget.watchFace {
+  /* Default watch face styling - rounded rectangle like Apple Watch */
+  border-radius: 12px;
+  aspect-ratio: 199/242;
+}
+
+.clockwidget.squareWidget {
+  /* Square widget styling */
+  border-radius: 8px;
+  aspect-ratio: 1;
+}
+
+.clockwidget.wideWidget {
+  /* Wide widget styling */
+  border-radius: 12px;
+  aspect-ratio: 16/9;
+}
+
 /* Ensure consistent sizing in normal view */
 .preview-pill .clockwidget {
   width: auto;
@@ -21,10 +40,10 @@
 
 /* Fullscreen styles with high specificity */
 .fullscreen-container:fullscreen .clockwidget {
-  width: min(60vw, 60vh, 600px) !important;
-  height: min(60vw, 60vh, 600px) !important;
-  max-width: min(60vw, 60vh, 600px) !important;
-  max-height: min(60vw, 60vh, 600px) !important;
+  width: auto !important;
+  height: min(70vh, 600px) !important;
+  max-width: 90vw !important;
+  max-height: min(70vh, 600px) !important;
 }
 
 .clockwidget text {

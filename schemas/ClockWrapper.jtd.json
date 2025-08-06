@@ -1,0 +1,344 @@
+{
+  "definitions": {
+    "ClockAsset": {
+      "properties": {
+        "hasTransparency": {
+          "type": "boolean"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "imageData": {
+          "type": "string"
+        }
+      }
+    },
+    "ClockStandard": {
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "layers": {
+          "elements": {
+            "ref": "ClockLayer"
+          }
+        }
+      },
+      "optionalProperties": {
+        "version": {
+          "type": "float64",
+          "metadata": {
+            "description": "Schema version, defaults to 1.0"
+          }
+        },
+        "canvas": {
+          "ref": "ClockCanvas"
+        }
+      }
+    },
+    "ClockCanvas": {
+      "optionalProperties": {
+        "width": {
+          "type": "float64",
+          "metadata": {
+            "description": "Canvas width, defaults to 199.0"
+          }
+        },
+        "height": {
+          "type": "float64",
+          "metadata": {
+            "description": "Canvas height, defaults to 242.0"
+          }
+        },
+        "type": {
+          "enum": [
+            "watchFace",
+            "squareWidget",
+            "wideWidget"
+          ],
+          "metadata": {
+            "description": "Canvas type, defaults to watchFace"
+          }
+        }
+      }
+    },
+    "ClockLayer": {
+      "properties": {
+        "type": {
+          "enum": [
+            "dateTime",
+            "text",
+            "icon",
+            "dataLabel",
+            "image",
+            "hand",
+            "dataBar",
+            "dataRing"
+          ]
+        },
+        "zIndex": {
+          "type": "int32",
+          "metadata": {
+            "description": "0 is bottom higher is top. layering"
+          }
+        },
+        "customName": {
+          "type": "string",
+          "metadata": {
+            "description": "each layer can have user generated names or empty"
+          }
+        },
+        "filename": {
+          "type": "string",
+          "metadata": {
+            "description": "filenames for images used in the layer"
+          }
+        },
+        "fillColor": {
+          "type": "string",
+          "metadata": {
+            "description": "fill color ( re used for public various types )"
+          }
+        },
+        "alpha": {
+          "type": "float64",
+          "metadata": {
+            "description": "transparency"
+          }
+        },
+        "horizontalPosition": {
+          "type": "float64",
+          "metadata": {
+            "description": "0 is center : negative left"
+          }
+        },
+        "verticalPosition": {
+          "type": "float64",
+          "metadata": {
+            "description": "0 is center : negative up"
+          }
+        },
+        "scale": {
+          "type": "float64",
+          "metadata": {
+            "description": "1.0 is normal"
+          }
+        },
+        "angleOffset": {
+          "type": "float64",
+          "metadata": {
+            "description": "rotation of the overall layer"
+          }
+        },
+        "isHidden": {
+          "type": "boolean",
+          "metadata": {
+            "description": "hide this layer"
+          }
+        }
+      },
+      "optionalProperties": {
+        "dataSource": {
+          "type": "string",
+          "metadata": {
+            "description": "used in combination with a layer type to set the format"
+          }
+        },
+        "textOptions": {
+          "ref": "ClockLayerTextOptions"
+        },
+        "iconOptions": {},
+        "dataLabelOptions": {
+          "ref": "ClockLayerDataLabelOptions"
+        },
+        "weatherOptions": {},
+        "handOptions": {
+          "ref": "ClockLayerHandOptions"
+        },
+        "dataBarOptions": {},
+        "dataRingOptions": {}
+      }
+    },
+    "ClockLayerTextOptions": {
+      "properties": {
+        "casingType": {
+          "ref": "ClockLayerTextCasing"
+        },
+        "fontFilename": {
+          "type": "string"
+        },
+        "fontDescription": {
+          "type": "string"
+        },
+        "customText": {
+          "type": "string",
+          "metadata": {
+            "description": "designer entered text to show in label"
+          }
+        },
+        "justification": {
+          "ref": "ClockLayerTextJustification"
+        },
+        "effectType": {
+          "type": "string",
+          "metadata": {
+            "description": "will be specific to platforms, might want to ignore"
+          }
+        },
+        "outlineWidth": {
+          "type": "float64",
+          "metadata": {
+            "description": "pixels to show as outline on the text"
+          }
+        },
+        "outlineColor": {
+          "type": "string",
+          "metadata": {
+            "description": "color for outline"
+          }
+        },
+        "kerning": {
+          "type": "float64",
+          "metadata": {
+            "description": "added as adv option, probably ignore"
+          }
+        }
+      },
+      "optionalProperties": {
+        "fontFamily": {
+          "type": "string"
+        },
+        "dateTimeFormat": {
+          "enum": [
+            "",
+            "HHMMSS",
+            "HHMM",
+            "HHMMPM",
+            "HH",
+            "MM",
+            "SS",
+            "PM",
+            "DADD",
+            "DDMM",
+            "MMDD",
+            "MO",
+            "ML",
+            "MN",
+            "DA",
+            "DD",
+            "DDAuto",
+            "DL",
+            "DY",
+            "DW",
+            "WY",
+            "YY",
+            "YYYY",
+            "Colon",
+            "Slash",
+            "City",
+            "Country",
+            "HourWord",
+            "MinuteWord",
+            "SecondsWord",
+            "HourWordUnit",
+            "MinuteWordUnit",
+            "SecondsWordUnit",
+            "dataLabel"
+          ]
+        },
+        "dateTimeFormatDescription": {
+          "type": "string"
+        }
+      }
+    },
+    "ClockLayerTextJustification": {
+      "enum": [
+        "left",
+        "centered",
+        "right"
+      ]
+    },
+    "ClockLayerTextCasing": {
+      "enum": [
+        "none",
+        "lower",
+        "sentence",
+        "uppercased",
+        "word"
+      ]
+    },
+    "ClockLayerHandOptions": {
+      "properties": {
+        "handType": {
+          "ref": "ClockLayerHandTypes"
+        },
+        "handStyle": {
+          "type": "string"
+        },
+        "handStyleDescription": {
+          "type": "string",
+          "metadata": {
+            "description": "localized text description of the hand style"
+          }
+        },
+        "useImage": {
+          "type": "boolean",
+          "metadata": {
+            "description": "use images instead of vectors"
+          }
+        },
+        "animateClockwise": {
+          "type": "boolean",
+          "metadata": {
+            "description": "used usually in combination with images that have numbers to animate in reverse to show numbers increasing for time"
+          }
+        },
+        "imageAnchorX": {
+          "type": "float64",
+          "metadata": {
+            "description": "when using images the anchor position ( bottom / centered of the image ) default: 0.5"
+          }
+        },
+        "imageAnchorY": {
+          "type": "float64",
+          "metadata": {
+            "description": "when using images the anchor position ( bottom / centered of the image ) default: 0.5"
+          }
+        }
+      }
+    },
+    "ClockLayerHandTypes": {
+      "enum": [
+        "second",
+        "minute",
+        "hour"
+      ]
+    },
+    "ClockLayerDataLabelOptions": {
+      "optionalProperties": {
+        "unitDisplayLevel": {
+          "enum": [
+            "short",
+            "medium",
+            "long"
+          ]
+        }
+      }
+    }
+  },
+  "properties": {
+    "clockStandard": {
+      "ref": "ClockStandard"
+    }
+  },
+  "optionalProperties": {
+    "assets": {
+      "elements": {
+        "ref": "ClockAsset"
+      }
+    },
+    "images": {
+      "elements": {}
+    }
+  }
+}

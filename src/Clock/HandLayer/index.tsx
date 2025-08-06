@@ -27,8 +27,6 @@ const HandLayer: FunctionComponent<LayerProps> = ({
   const fraction = angleExtractors[handOptions.handType || ClockLayerHandTypesEnum.Hour](now);
   const angle = 360 * ((handOptions.animateClockwise || false) ? fraction : 1 - fraction);
 
-  // Debug logging
-  console.log(`HandLayer - Type: ${handOptions.handType}, Fraction: ${fraction}, Angle: ${angle}, UseImage: ${handOptions.useImage}`);
   if (handOptions.useImage) {
     return (
       <ImageHand
