@@ -1,13 +1,13 @@
 # IDE and editor files
-.idea
-.kiro
-.vscode
+.idea/
+.kiro/
+.vscode/
 
 # Build output
-dist
+dist/
 
 # Dependencies
-node_modules
+node_modules/
 
 # Logs and temporary files
 yarn-error.log
@@ -32,8 +32,9 @@ Thumbs.db
 # Generated files
 src/font-names.json
 
-# Temporary schema example
+# Temporary and example files
 schema.example.json
+src/styles/style.css.original
 
 # Test coverage
 coverage/
@@ -42,3 +43,6 @@ coverage/
 # Cache directories
 .cache/
 .parcel-cache/
+
+# Quality assurance
+qodana.yaml

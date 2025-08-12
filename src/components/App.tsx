@@ -10,36 +10,13 @@ import { AssetWarningProvider } from '../Clock/AssetWarningContext';
 import FontCacheMenu from './FontCacheMenu';
 import TimeCustomizer from './TimeCustomizer';
 
-// Helper to make error messages user-friendly
-function formatErrorMessage(error: any): string {
-  // Try to parse known schema validation errors
-  if (typeof error === 'string') {
-    try {
-      const errObj = JSON.parse(error);
-      if (
-        errObj.instancePath &&
-        errObj.schemaPath &&
-        errObj.instancePath.includes('dateTimeFormat')
-      ) {
-        // Extract layer number if present
-        const match = /layers","(\d+)"/.exec(
-          JSON.stringify(errObj.instancePath)
-        );
-        const layer = match ? match[1] : '?';
-        return `Layer ${layer}: Invalid or unsupported dateTimeFormat value in textOptions.`;
-      }
-    } catch { }
-  }
-  // Fallback: show the error as a string
-  return typeof error === 'string' ? error : JSON.stringify(error);
-}
-
-const getMessage = (rs: ParseResult[]): string[] =>
-  rs.flatMap((r) => {
-    if ('errors' in r) {
-      return r.errors.map((e) => JSON.stringify(e));
-    } else if ('exception' in r) {
-      return [r.exception];
+// Helper to extract error messages from parse results
+const getErrorMessages = (parseResults: ParseResult[]): string[] =>
+  parseResults.flatMap((result) => {
+    if ('errors' in result) {
+      return result.errors.map((error) => error.message || 'Validation error');
+    } else if ('exception' in result) {
+      return [result.exception];
     } else {
       return [];
     }
@@ -59,7 +36,7 @@ const ClocksOrError: FunctionComponent<{
   ratio?: number;
   fullscreenRef?: React.RefObject<{ enterFullscreen: () => Promise<boolean>; exitFullscreen: () => Promise<boolean>; isFullscreen: boolean }>;
 }> = ({ parseResults, height = 400, ratio = 0.82, fullscreenRef }) => {
-  const errors = getMessage(parseResults);
+  const errors = getErrorMessages(parseResults);
   if (errors.length > 0) {
     return (
       <div className="error">
@@ -67,8 +44,8 @@ const ClocksOrError: FunctionComponent<{
           Error loading clock file:
         </div>
         <ul style={{ textAlign: 'left', margin: 0, paddingLeft: 18 }}>
-          {errors.map((e, i) => (
-            <li key={i}>{formatErrorMessage(e)}</li>
+          {errors.map((error, i) => (
+            <li key={i}>{error}</li>
           ))}
         </ul>
         <div style={{ marginTop: 8, fontSize: '0.95em', color: '#666' }}>

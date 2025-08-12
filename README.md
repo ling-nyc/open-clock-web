@@ -1,33 +1,38 @@
-## Fork of Mike Castleman's web renderer
+# Open Clock Web
 
-## Todo:
-- ~~split css into separate files~~ ✅ **COMPLETED**
-- improve renderer, broken in some cases
-- easier font management
-- potential json editor embedded in the site?? maybe
+A modern web renderer for the [OpenClockStandard][] format. Upload .ocs files to preview analog clocks with real-time updates, custom fonts, and interactive controls.
 
+## Features
+- ✅ **OCS File Rendering** - Full support for OpenClockStandard format
+- ✅ **Real-time Clock Display** - Live time updates with smooth animations  
+- ✅ **Custom Time Control** - Set specific times for preview
+- ✅ **Dark/Light Mode** - Theme switching with persistent preferences
+- ✅ **Font Management** - Upload and cache custom fonts
+- ✅ **Asset Error Handling** - User-friendly warnings for missing assets
+- ✅ **Fullscreen Mode** - Immersive clock viewing experience
+- ✅ **Sample Clock Library** - Built-in examples to explore
 
-# open-clock-web
+## Development
 
-A web renderer for the [OpenClockStandard][].
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [Yarn](https://yarnpkg.com/) package manager
 
-**WIP, very early stages, doesn't do much yet**
+### Setup
+```bash
+git clone <repository-url>
+cd open-clock-web
+yarn install
+```
 
-## Hacking
+### Commands
+- `yarn dev` - Start development server with hot reload
+- `yarn build` - Build for production
+- `yarn lint` - Run ESLint and TypeScript checks
+- `yarn test` - Run test suite
 
-To get the dependencies:
-
-1. Install [`node.js`][node.js] and [yarn][] if you don't already have them.
-1. Clone the repo.
-1. do `yarn install`
-1. ~~install [jtd-codegen][] if you will be modifying any schemas~~ (no longer needed)
-1. obtain the fonts, and put them into a directory called `fonts` under the root of the repo. rename `PIXEL_MILLENNIUM.TFF` to `PIXEL_MILLENNIUM.TTF`
-
-Now, the following commands are available to you:
-
-- `yarn dev` to spin up a dev server for making changes
-- `yarn build` to build for production
-- ~~`yarn gen-schema` to rebuild the relevant typescript files if you touch the clock JTD schema~~ (no longer needed - TypeScript types are manually maintained)
+### Architecture
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed development guidelines and project structure.
 
 ## Further info
 

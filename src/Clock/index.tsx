@@ -2,13 +2,14 @@ import { FunctionComponent, useMemo, useEffect } from 'react';
 import { ClockWrapper } from '../open-clock';
 import './clock.css';
 import Layer from './Layer';
-import MaybeWrapper from './MaybeWrapper';
+
 import { useAssets } from './useAssets';
 import { useAssetWarnings } from './AssetWarningContext';
 import React, { useState } from 'react';
 import { addFontToCache } from '../components/FontCacheMenu';
-import ToastContainer, { ToastData } from '../components/ToastContainer';
+import ToastContainer from '../components/ToastContainer';
 import FontUploadModal from '../components/FontUploadModal';
+import { useClockWarnings } from './useClockWarnings';
 
 interface Props {
   clock: ClockWrapper;
@@ -26,16 +27,12 @@ const Clock: FunctionComponent<Props> = ({
   height,
   wrapper = true,
 }) => {
-  // Use the context-based warning system
-  const { warnings, addWarning, clearWarnings } = useAssetWarnings();
+  // Use simplified warning system
+  const { toasts, setToasts, addWarning, clearAllWarnings } = useClockWarnings();
 
-  // State for missing font popup
+  // State for font upload modal
   const [importFont, setImportFont] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
-  // State to track cancelled font imports to prevent reopening
-  const [, setCancelledFonts] = useState<Set<string>>(new Set());
-  // State for managing toast notifications
-  const [toasts, setToasts] = useState<ToastData[]>([]);
 
   // Calculate width and other layout properties based on canvas settings
   const canvas = clock.clockStandard.canvas;
@@ -57,66 +54,22 @@ const Clock: FunctionComponent<Props> = ({
 
   // Clear warnings when the clock changes
   useEffect(() => {
-    clearWarnings();
-    setCancelledFonts(new Set());
-    setToasts([]); // Clear all toasts when clock changes
-  }, [clock, clearWarnings]);
+    clearAllWarnings();
+  }, [clock, clearAllWarnings]);
 
-  // Group warnings by type for display
-  const fontWarnings = warnings
-    .filter((w) => w.type === 'font')
-    .map((w) => w.name);
-
-  const imageWarnings = warnings
-    .filter((w) => w.type === 'image')
-    .map((w) => w.name);
-
-  // Function to handle font upload from toast (opens modal)
+  // Handle font upload from toast
   const handleFontUpload = (fontName: string) => {
     setImportFont(fontName);
   };
 
-  // Manage toasts when warnings appear
+  // Update toasts to handle font upload
   useEffect(() => {
-    const newToasts: ToastData[] = [];
-
-    // Add font warning toast if there are font warnings
-    if (fontWarnings.length > 0) {
-      const fontToastExists = toasts.some(t => t.id === 'font-warnings');
-      if (!fontToastExists) {
-        newToasts.push({
-          id: 'font-warnings',
-          type: 'warning',
-          title: `Missing ${fontWarnings.length === 1 ? 'Font' : 'Fonts'}`,
-          items: fontWarnings,
-          onClose: () => {
-            setToasts(prev => prev.filter(t => t.id !== 'font-warnings'));
-          },
-          onUpload: handleFontUpload
-        });
-      }
-    }
-
-    // Add image warning toast if there are image warnings
-    if (imageWarnings.length > 0) {
-      const imageToastExists = toasts.some(t => t.id === 'image-warnings');
-      if (!imageToastExists) {
-        newToasts.push({
-          id: 'image-warnings',
-          type: 'error',
-          title: `Missing ${imageWarnings.length === 1 ? 'Image' : 'Images'}`,
-          items: imageWarnings,
-          onClose: () => {
-            setToasts(prev => prev.filter(t => t.id !== 'image-warnings'));
-          }
-        });
-      }
-    }
-
-    if (newToasts.length > 0) {
-      setToasts(prev => [...prev, ...newToasts]);
-    }
-  }, [fontWarnings.length, imageWarnings.length]);
+    setToasts(prev => prev.map(toast =>
+      toast.id === 'font-warnings'
+        ? { ...toast, onUpload: handleFontUpload }
+        : toast
+    ));
+  }, [setToasts]);
 
   // Function to add a missing image warning
   const handleMissingImage = (name: string) => {
@@ -159,11 +112,8 @@ const Clock: FunctionComponent<Props> = ({
     reader.readAsDataURL(file);
   };
 
-  // Function to close font upload modal
+  // Close font upload modal
   const handleCloseFontModal = () => {
-    if (importFont) {
-      setCancelledFonts((prev) => new Set(prev).add(importFont));
-    }
     setImportFont(null);
     setImportError(null);
   };
@@ -189,7 +139,29 @@ const Clock: FunctionComponent<Props> = ({
       {/* Toast Container - manages multiple toasts and prevents stacking */}
       <ToastContainer toasts={toasts} />
 
-      <MaybeWrapper render={wrapper} style={style}>
+      {wrapper ? (
+        <div style={style}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`clockwidget ${canvas?.type ?? 'watchFace'}`}
+            viewBox={viewBox}
+            preserveAspectRatio="xMidYMid meet"
+          >
+            {clock.clockStandard.layers.map((layer) => (
+              <Layer
+                assets={assets}
+                ratio={effectiveRatio}
+                layer={layer}
+                canvasWidth={canvasWidth}
+                canvasHeight={canvasHeight}
+                key={layer.zIndex}
+                onMissingImage={handleMissingImage}
+                onMissingFont={handleMissingFont}
+              />
+            ))}
+          </svg>
+        </div>
+      ) : (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={`clockwidget ${canvas?.type ?? 'watchFace'}`}
@@ -209,7 +181,7 @@ const Clock: FunctionComponent<Props> = ({
             />
           ))}
         </svg>
-      </MaybeWrapper>
+      )}
     </div>
   );
 };
