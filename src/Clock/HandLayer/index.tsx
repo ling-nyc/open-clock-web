@@ -41,10 +41,18 @@ const HandLayer: FunctionComponent<LayerProps> = ({
       />
     );
   } else {
+    // For SVG sprite hands, apply scale transform since sprites are pre-defined
+    const scale = layer.scale ?? 1.0;
+    const transforms = [`rotate(${angle} ${position.x} ${position.y})`];
+
+    if (scale !== 1.0) {
+      transforms.push(`scale(${scale})`);
+    }
+
     return (
       <use
         href={`#${handOptions.handStyle || 'default'}`}
-        transform={`rotate(${angle} ${position.x} ${position.y})`}
+        transform={transforms.join(' ')}
       />
     );
   }

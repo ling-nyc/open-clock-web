@@ -42,11 +42,12 @@ const ImageHand: FunctionComponent<HandProps> = ({
   if (!asset) {
     return null;
   }
-  // Scale images to be proportional to the coordinate system
-  // Use a scaling factor that makes images appropriately sized
-  const s = Number(scale) * 0.8; // Adjusted scaling factor
-  const width = asset.width * s;
-  const height = asset.height * s;
+  // Scale images based on the OCS scale property
+  // Use a reasonable conversion factor from pixels to SVG units
+  const layerScale = Number(scale ?? 1);
+  const pixelToSvgFactor = 0.4; // Adjust this if hands appear too large/small
+  const width = asset.width * layerScale * pixelToSvgFactor;
+  const height = asset.height * layerScale * pixelToSvgFactor;
   const cx = Number(imageAnchorX);
   const cy = Number(imageAnchorY);
   const transform = `rotate(${angle} ${x} ${y})`;

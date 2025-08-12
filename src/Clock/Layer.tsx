@@ -104,8 +104,7 @@ const Layer: FunctionComponent<Props> = ({
     return null;
   }
 
-  // Handle scale and rotation transforms
-  const scale = layer.scale ?? 1.0;
+  // Handle rotation transforms only - each layer type handles its own scaling
   const angleOffset = layer.angleOffset ?? 0;
 
   const transforms = [];
@@ -115,10 +114,10 @@ const Layer: FunctionComponent<Props> = ({
     transforms.push(`rotate(${angleOffset},${position.x},${position.y})`);
   }
 
-  // Add scale transform if needed
-  if (scale !== 1.0) {
-    transforms.push(`scale(${scale})`);
-  }
+  // Note: Scale transforms are handled by individual layer components:
+  // - TextLayer: uses scale for fontSize calculation
+  // - ImageLayer: uses scale for width/height calculation  
+  // - HandLayer: uses scale for hand sizing (SVG sprites or image hands)
 
   const transform = transforms.length > 0 ? transforms.join(' ') : undefined;
 
@@ -138,6 +137,11 @@ const Layer: FunctionComponent<Props> = ({
         position={position}
         layer={layer}
         onMissingFont={onMissingFont}
+        {...(layer.type === ClockLayerTypeEnum.Image && {
+          canvasWidth,
+          canvasHeight,
+          ratio
+        })}
       />
     </g>
   );
